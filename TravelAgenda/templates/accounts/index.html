@@ -1,0 +1,406 @@
+﻿{% load static %}
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>Home</title>
+        <meta name="description" content="">
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="{% static 'home_assets/favicon.png' %}">
+
+        <!-- Google fonts links -->
+        <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700|Heebo:100,300,400,500,700,800,900|Nunito" rel="stylesheet">
+
+        <!-- For Plugins external css -->
+        <link rel="stylesheet" href="{% static 'home_assets/css/plugins.css' %}">
+        <link rel="stylesheet" href="{% static 'home_assets/css/bootstrap-touch-slider.css' %}">
+
+        <!-- Theme custom css -->
+        <link rel="stylesheet" href="{% static 'home_assets/css/style.css' %}">
+        <!-- <link rel="stylesheet" href="{% static 'home_assets/css/colors/blue.css' %}"> -->
+
+        <!-- Theme Responsive css -->
+        <link rel="stylesheet" href="{% static 'home_assets/css/responsive.css' %}" />
+
+        <script src="{% static 'home_assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+    </head>
+
+    <body data-spy="scroll" data-target=".navbar-collapse">
+
+        <!-- Preloader -->
+        <div class="preloader loaderbox">
+            <div id="cupcake" class="loaderbox">
+                <span class="letter">L</span>
+                <div class="cupcakeCircle loaderbox"><div class="cupcakeInner loaderbox"><div class="cupcakeCore loaderbox"></div></div></div>
+                <span class="letter loaderbox">A</span><span class="letter loaderbox">D</span><span class="letter loaderbox">I</span><span class="letter loaderbox">N</span><span class="letter loaderbox">G</span>
+            </div>
+        </div>
+        <!--End off Preloader -->
+
+
+
+        <!--Home page style-->
+
+        <nav class="navbar home1_menu navbar-fixed navbar-default navbar-mobile bootsnav is-visible xsaa" data-nav-status="toggle">
+            <div class="container-fluid"> 
+                <div class="row"> 
+                    <!-- Start Top Search -->
+                    <div class="top-search">
+                        <div class="container">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                                <input type="text" class="form-control" placeholder="Search">
+                                <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Top Search -->
+                    <div class="container">
+                        <div class="row">
+                            <div class="attr-nav">
+                                <ul>
+                                    <li class="search"><a href="#" class="hv1"><i class="fa fa-search"></i></a></li>
+                                    <li class="dropdown cart-menu">
+                                        <a href="#" class="dropdown-toggle hv1" data-toggle="dropdown" >
+                                            <i class="fa fa-shopping-cart"></i>
+                                            <span class="badge">0</span>
+                                        </a>
+                                        <ul class="dropdown-menu cart-list">
+                                            <li>
+                                                <a href="#" class="photo"><img src="{% static 'home_assets/images/computer.png' %}" class="cart-thumb" alt="" /></a>
+                                                <h6><a href="#">Delica omtantur </a></h6>
+                                                <p>2x - <span class="price">$99.99</span></p>
+                                            </li>
+                                            <li>
+                                                <a href="#" class="photo"><img src="{% static 'home_assets/images/computer.png' %}" class="cart-thumb" alt="" /></a>
+                                                <h6><a href="#">Delica omtantur </a></h6>
+                                                <p>2x - <span class="price">$99.99</span></p>
+                                            </li>
+                                            <li class="total">
+                                                <span class="pull-right"><strong>Total</strong>: $0.00</span>
+                                                <a href="#" class="btn btn-primary btn-cart btn-round">Cart</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li id="open-button" class="side-menu">
+                                        <a href="#">
+                                            <span class="icon-01"></span>
+                                            <span class="icon-02"></span>
+                                            <span class="icon-03"></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Start Header Navigation -->
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                                    <i class="fa fa-bars"></i>
+                                </button>
+                                <a class="navbar-brand" href="#brand"><img src="{% static 'home_assets/images/logov1.png' %}" class="logo" alt=""></a>
+                            </div>
+                            <!-- End Header Navigation -->
+        
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <div class="collapse navbar-collapse" id="navbar-menu">
+                                <ul class="nav navbar-nav navbar-center" data-in="fadeIn" data-out="fadeOut">
+                                    <li><a href="index.html">Home</a></li>
+                                    <li><a href="service.html">Service</a></li>
+                                    <li><a href="about.html">About Us</a></li>
+                                    <li><a href="blog.html">Blog</a></li>
+                                    <li><a href="contactus.html">Contact Us</a></li>
+                                </ul>
+                            </div><!-- /.navbar-collapse -->
+                        </div>
+                    </div>
+                </div>   
+            </div>   
+        </nav> <!-- End off Nav -->
+        
+
+
+
+        <div class="culmn">
+
+            <section id="homev1" class="homev1 home-one">
+        
+                <div id="bootstrap-touch-slider" class="carousel bs-slider fade  control-round indicators-line kenburns_zoomInOut" data-ride="carousel" data-interval="10000" >
+                    <!-- Wrapper For Slides -->
+                    <div class="carousel-inner" role="listbox">
+                        <!-- First Slide -->
+                        <div class="item active">
+                            <!-- Slide Background -->
+                            <img src="{% static 'home_assets/images/slide-bg-01.jpg' %}" alt="SeoPress Slider" />
+                            <div class="bs-slider-overlay"></div>
+        
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-8 col-md-offset-2">
+                                        <div class="slide-text slide_style_center">
+                                            <h1 class="text-white" data-animation="animated zoomInRight">Solution For 
+                                                Online Marketing</h1>
+                                            <p class="text-white m-top-10" data-animation="animated fadeInLeft">Our SEO experts do a thorough research on each and every project 
+                                                client assign to us irrespective of the size of the project. </p>
+                                                <a class="btn btn-primary btn-round m-top-30" data-animation="animated fadeInLeft" href="{% url 'accounts:login' %}" >Login</a>
+                                                <a class="btn btn-default btn-round m-top-30" data-animation="animated fadeInRight" href="{% url 'accounts:register' %}" >Register</a>
+                                                
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Slide -->
+        
+                        <!-- Second Slide -->
+                        <div class="item">
+                            <img src="{% static 'home_assets/images/slide-bg-02.jpg' %}" alt="SeoPress Slider" />
+                            <div class="bs-slider-overlay"></div>
+                            <div class="container">
+                                <div class="row">
+                                    <!-- Slide Text Layer -->
+                                    <div class="col-md-6">
+                                        <div class="slide-text slide_style_left">
+                                            <h1 class="text-white" data-animation="animated fadeInRight">World Class  
+                                                Online Marketing Service</h1>
+                                            <p class="text-white m-top-10" data-animation="animated zoomInLeft">Our SEO experts do a thorough research on each and every project 
+                                                client assign to us irrespective of the size of the project. 
+                                            </p>
+        
+                                            <a class="btn btn-primary btn-round m-top-30" data-animation="animated fadeInLeft" href="{% url 'accounts:login' %}" >Login</a>
+                                            <a class="btn btn-default btn-round m-top-30" data-animation="animated fadeInRight" href="{% url 'accounts:register' %}" >Register</a>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Slide -->
+        
+                        <!-- Third Slide -->
+                        <div class="item">
+                            <img src="{% static 'home_assets/images/slide-bg-03.jpg' %}" alt="SeoPress Slider" />
+                            <div class="bs-slider-overlay"></div>
+                            <div class="container">
+                                <div class="row">
+                                    <!-- Slide Text Layer -->
+                                    <div class="col-md-6">
+                                        <div class="slide-text slide_style_left">
+                                            <h1 class="text-white" data-animation="animated fadeInDown">Solution For 
+                                                Online Marketing Needs</h1>
+                                            <p class="text-white m-top-10" data-animation="animated fadeInLeft">Our SEO experts do a thorough research on each and every project 
+                                                client assign to us irrespective of the size of the project. 
+                                            </p>
+        
+                                            <a class="btn btn-primary btn-round m-top-30" data-animation="animated fadeInLeft" href="{% url 'accounts:login' %}" >Login</a>
+                                                <a class="btn btn-default btn-round m-top-30" data-animation="animated fadeInRight" href="{% url 'accounts:register' %}" >Register</a>
+                                                
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <!-- Fourth Slide -->
+                        <div class="item">
+                            <img src="{% static 'home_assets/images/slide-bg-04.jpg' %}" alt="SeoPress Slider" />
+                            <div class="bs-slider-overlay"></div>
+                            <div class="container">
+                                <div class="row">
+                                    <!-- Slide Text Layer -->
+                                    <div class="col-md-6">
+                                        <div class="slide-text slide_style_left">
+                                            <h1 class="text-white" data-animation="animated fadeInLeft">SeoPress <br />
+                                                Online Marketing Needs</h1>
+                                            <p class="text-white m-top-10" data-animation="animated fadeInRight">Our SEO experts do a thorough research on each and every project 
+                                                client assign to us irrespective of the size of the project. 
+                                            </p>
+                                            <a class="btn btn-primary btn-round m-top-30" data-animation="animated fadeInLeft" href="{% url 'accounts:login' %}" >Login</a>
+                                            <a class="btn btn-default btn-round m-top-30" data-animation="animated fadeInRight" href="{% url 'accounts:register' %}" >Register</a>
+                                                
+                                        </div>
+                                    </div>
+        
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Slide -->
+                    </div><!-- End of Wrapper For Slides -->
+                    <!-- carousel indicators -->
+                    <div class="carousel-indicators text-center">
+                        <div data-target="#bootstrap-touch-slider" data-slide-to="0" class="active indicatior-item text-center bg-black"> 
+                            <div class="slid-number">1</div>
+                            <div class="sp-thumbnail-title text-white m-top-10">
+                                <h4>Web Design</h4>
+                            </div>
+                            <div class="hidden-sm carousel-indicators-description bg-info text-white m-top-20">
+                                <p class="bg-info">Each of our designs begin with a blank canvas 
+                                    which allows your content to guide.</p>
+                            </div>
+                        </div>
+
+                        <div data-target="#bootstrap-touch-slider" data-slide-to="1" class="indicatior-item text-center bg-black">
+                            <div class="slid-number">2</div>
+                            <div class="sp-thumbnail-title text-white m-top-10">
+                                <h4>Development</h4>
+                            </div>
+                            <div class="hidden-sm carousel-indicators-description bg-info text-white m-top-20">
+                                <p>Responsive development will help make your website easily accessible across all devices.</p>
+                            </div>
+                        </div>
+
+                        <div data-target="#bootstrap-touch-slider" data-slide-to="2" class="indicatior-item text-center bg-black">
+                            <div class="slid-number">3</div>
+                            <div class="sp-thumbnail-title text-white m-top-10">
+                                <h4>Newsletter</h4>
+                            </div>
+                            <div class="hidden-sm carousel-indicators-description bg-info text-white m-top-20">
+                                <p>A matching newsletter is the perfect way to complement your website.</p>
+                            </div>
+                        </div>
+
+                        <div data-target="#bootstrap-touch-slider" data-slide-to="3" class="indicatior-item text-center bg-black">
+                            <div class="slid-number">4</div>
+                            <div class="sp-thumbnail-title text-white m-top-10">
+                                <h4>Social Media</h4>
+                            </div>
+                            <div class="hidden-sm carousel-indicators-description bg-info text-white m-top-20">
+                                <p>It’s important to keep your brand consistent recognizable across all platforms.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div><!-- End of Bootstrap Slider -->
+            </section><!-- End off homev1 section -->
+            <section id="service" class="service sections">
+                <div class="container">
+            
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="head-title text-center">
+                                <h2 class="text-black">SeoPress is a battle hardened team of SEO experts.</h2>
+                                <p class="m-top-10 text-black">Get your website on the first page of Google and attract thousands of your customers.</p>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="row">
+                        <div class="main-service-area text-center m-top-80">
+                            <div class="col-md-4 col-sm-6">
+                                <div class="service-item sm-m-top-65">
+                                    <div class="service-icon">
+                                        <img src="{% static 'home_assets/images/service1.png' %}" alt="" />
+                                    </div>
+                                    <h5 class="text-info m-top-50">Search Engine Optimization</h5>
+                                    <p class="text-black m-top-20">With our 17+ years of experience, our SEO services will get your site ranking.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="service-item sm-m-top-65">
+                                    <div class="service-icon">
+                                        <img src="{% static 'home_assets/images/service3.png' %}" alt="" />
+                                    </div>
+                                    <h5 class="text-info m-top-50">Content Marketing</h5>
+                                    <p class="text-black m-top-20">From blogs and social posts to 
+                                        infographics videos we create and promote quality.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="service-item sm-m-top-65">
+                                    <div class="service-icon">
+                                        <img src="{% static 'home_assets/images/service2.png' %}" alt="" />
+                                    </div>
+                                    <h5 class="text-info m-top-50">Social Media Marketing</h5>
+                                    <p class="text-black m-top-20">Boost brand awareness and reach your 
+                                        customers on a human level.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="service-item m-top-65">
+                                    <div class="service-icon">
+                                        <img src="{% static 'home_assets/images/service4.png' %}" alt="" />
+                                    </div>
+                                    <h5 class="text-info m-top-50">Web Design & Development</h5>
+                                    <p class="text-black m-top-20">Our designers and developers will create an attractive, SEO-friendly & fully functional.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="service-item m-top-65">
+                                    <div class="service-icon">
+                                        <img src="{% static 'home_assets/images/service5.png' %}" alt="" />
+                                    </div>
+                                    <h5 class="text-info m-top-50">eCommerce Solutions</h5>
+                                    <p class="text-black m-top-20">With our 17+ years of experience, 
+                                        our SEO services will get your site ranking.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="service-item m-top-65">
+                                    <div class="service-icon">
+                                        <img src="{% static 'home_assets/images/service6.png' %}" alt="" />
+                                    </div>
+                                    <h5 class="text-info m-top-50">Inbound Marketing</h5>
+                                    <p class="text-black m-top-20">With our ecommerce solutions, 
+                                        you'll provide an enjoyable, seamless.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End off row -->
+                </div><!-- End off container -->
+            </section><!-- End off Service Section -->
+            
+            <section id="leading" class="leading bg-primary sections2">
+                <div class="container">
+                    <div class="row">
+                        <div class="main-leading">
+                            <div class="col-md-6">
+                                <div class="leading-content">
+                                    <div class="head-title">
+                                        <h2 class="text-white">Sit back, relax and learn from 
+                                            the experts.</h2>
+                                        <p class="m-top-30 text-white">According to TopTenReviews in 2017, as well as many other 3rd party review 
+                                            sites and publications we always come out on top.</p>
+        
+                                        <div class="separator2 hv2"><span></span><span></span><span></span></div>
+                                    </div>
+        
+                                    <p class="m-top-40">We’re a leading Internet Digital Marketing Company who offers SEO, 
+                                        Paid Search, Social Media, ConsultingLead Generation, Brand Reputation 
+                                        Management, and Web Design Services.</p>
+                                    <a href="" class="btn btn-default btn-round m-top-20">Our Team</a>
+        
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="leading-img sm-m-top-50">
+                                    <img src="{% static 'home_assets/images/leading-img.png' %}" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End off row-->
+                </div><!-- End off container -->
+            </section><!-- End off leading section-->
+        </div>
+        
+
+
+
+        <!-- JS includes -->
+        <script src="{% static 'home_assets/js/vendor/jquery-1.11.2.min.js' %}"></script>
+        <script src="{% static 'home_assets/js/vendor/bootstrap.js' %}"></script>
+
+        <script src="{% static 'home_assets/js/jquery.magnific-popup.js' %}"></script>
+        <script src="{% static 'home_assets/js/jquery.easing.1.3.js' %}"></script>
+        <script src="{% static 'home_assets/js/jquery.touchSwipe.min.js' %}"></script>
+        <script src="{% static 'home_assets/js/bootsnav.js' %}"></script>
+        <script src="{% static 'home_assets/js/jquery.formchimp.js' %}"></script>
+
+        <script src="{% static 'home_assets/js/plugins.js' %}"></script>
+        <script src="{% static 'home_assets/js/main.js' %}"></script>
+
+
+    </body>
+</html>
+
