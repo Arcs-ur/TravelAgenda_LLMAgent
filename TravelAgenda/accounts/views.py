@@ -37,14 +37,12 @@ def login_view(request):
             print("User does not exist.")
 
         user = authenticate(request, username=username, password=password)
-        print("hi")
         if user is not None:
             login(request, user)
-            print("I am login")
+            
             messages.success(request, 'Login successful!')
             return redirect('dashboard:dashboard') 
         else:
-            print("user is not here")
             messages.error(request, 'Invalid username or password.')
 
     return render(request, 'accounts/login.html')

@@ -55,14 +55,14 @@
         <body>
             <!--Side Bar-->
             
-            <div class="sidebar sidebar-fixed border-end" id="sidebar">
+            <div class="sidebar sidebar-dark sidebar-fixed border-end" data-coreui="navigation" id="sidebar">
                 <div class="sidebar-header border-bottom">
                   <div class="sidebar-brand">CoreUI</div>
                 </div>
                 
-                <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+                <ul class="sidebar-nav"  data-simplebar="">
                   <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link" href="{% url 'dashboard:dashboard' %}">
                       <i class="nav-icon bi-speedometer2"></i> 
                       <span data-coreui-i18n="dashboard">Dashboard</span>
                     </a>
@@ -92,7 +92,7 @@
                       <span data-coreui-i18n="base">Base</span>
                     </a>
               
-                    <ul class="nav-group-items compact">
+                    <ul class="nav-group-items compact" >
                       <li class="nav-item">
                         <a class="nav-link" href="">
                           <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Nav dropdown item
@@ -357,7 +357,7 @@
                               <i class="bi bi-lock me-2"></i>
                               <span data-coreui-i18n="lockAccount">Lock Account</span>
                             </a>
-                            <a class="dropdown-item" href="/logout">
+                            <a class="dropdown-item" href="/">
                               <i class="bi bi-box-arrow-right me-2"></i>
                               <span data-coreui-i18n="logout">Logout</span>
                             </a>
@@ -420,23 +420,22 @@
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('sidebar-narrow');
         }
+          document.querySelectorAll('.nav-group-toggle').forEach(item => {
+          item.addEventListener('click', function(e) {
+              // Toggle 'nav-group-show' class to expand/collapse
+              const parentGroup = this.parentNode;
+              parentGroup.classList.toggle('nav-group-show');
+              // Toggle 'active' class to highlight the active item
+              this.classList.toggle('active');
+          });
+      });
+
         </script>
 
         {% block script %}
         <!-- Additional scripts can be added here -->
-         <script>
-            document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                // 移除所有 nav-link 的 active 类
-                document.querySelectorAll('.nav-link').forEach(item => {
-                    item.classList.remove('active');
-                });
-                // 为当前点击的链接添加 active 类
-                this.classList.add('active');
-            });
-        });
+        
 
-         </script>
         {% endblock %}
 
         {% block css %}
