@@ -27,5 +27,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     # dashboard
     path('dashboard/', include('dashboard.urls')),
+    # agenda
+    path('agenda/', include('agenda.urls')),
 
 ]

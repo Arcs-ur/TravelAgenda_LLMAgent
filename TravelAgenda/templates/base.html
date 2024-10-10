@@ -71,7 +71,7 @@
                
                   <li class="nav-title" data-coreui-i18n="theme">Destinations</li>
                   <li class="nav-group">
-                    <a class="nav-link nav-group-toggle" href="">
+                    <a class="nav-link nav-group-toggle active" href="">
                       <i class="nav-icon bi-layers"></i>
                       <span>探索目的地</span>
                     </a>
@@ -116,13 +116,13 @@
                   <li class="nav-title" data-coreui-i18n="components">Agenda</li>
               
                   <li class="nav-group">
-                    <a class="nav-link nav-group-toggle" href="">
+                    <a class="nav-link nav-group-toggle active" href="">
                       <i class="nav-icon bi-calendar"></i>
                       <span>我的日程</span>
                     </a>
                     <ul class="nav-group-items compact">
                       <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'agenda:calendar' %}">
                           <span class="nav-icon"><i class="bi bi-eye"></i></span> 查看日程
                         </a>
                       </li>
@@ -143,7 +143,7 @@
                   
                   <li class="nav-title" data-coreui-i18n="theme">Posts</li>
                   <li class="nav-group">
-                    <a class="nav-link nav-group-toggle" href="">
+                    <a class="nav-link nav-group-toggle active" href="">
                       <i class="nav-icon bi-chat"></i>
                       <span>社区分享</span>
                     </a>
@@ -475,16 +475,7 @@
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('sidebar-narrow');
         }
-          document.querySelectorAll('.nav-group-toggle').forEach(item => {
-          item.addEventListener('click', function(e) {
-              // Toggle 'nav-group-show' class to expand/collapse
-              const parentGroup = this.parentNode;
-              parentGroup.classList.toggle('nav-group-show');
-              // Toggle 'active' class to highlight the active item
-              this.classList.toggle('active');
-          });
-      });
-
+          
         </script>
 
         {% block script %}
