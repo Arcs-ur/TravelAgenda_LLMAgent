@@ -71,29 +71,34 @@
                
                   <li class="nav-title" data-coreui-i18n="theme">Destinations</li>
                   <li class="nav-group">
-                    <a class="nav-link nav-group-toggle active" href="">
+                    <a class="nav-link nav-group-toggle" href="">
                       <i class="nav-icon bi-layers"></i>
                       <span>探索目的地</span>
                     </a>
                     <ul class="nav-group-items compact">
                       <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'destinations:attraction' %}">
                           <span class="nav-icon"><i class="bi bi-star"></i></span> 必玩 <!-- Star icon for must-visit attractions -->
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'destinations:restaurant' %}">
                           <span class="nav-icon"><i class="bi bi-basket"></i></span> 必吃 <!-- Basket icon for must-try foods -->
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'destinations:shop' %}">
                           <span class="nav-icon"><i class="bi bi-shop"></i></span> 必逛 <!-- Shop icon for must-visit shopping places -->
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'destinations:hotel' %}">
                           <span class="nav-icon"><i class="bi bi-house"></i></span> 必住 <!-- House icon for must-stay accommodations -->
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'destinations:traffic' %}">
+                          <span class="nav-icon"><i class="bi bi-speedometer2"></i></span> 交通 <!-- House icon for must-stay accommodations -->
                         </a>
                       </li>
                     </ul>
@@ -116,7 +121,7 @@
                   <li class="nav-title" data-coreui-i18n="components">Agenda</li>
               
                   <li class="nav-group">
-                    <a class="nav-link nav-group-toggle active" href="">
+                    <a class="nav-link nav-group-toggle" href="">
                       <i class="nav-icon bi-calendar"></i>
                       <span>我的日程</span>
                     </a>
@@ -143,18 +148,18 @@
                   
                   <li class="nav-title" data-coreui-i18n="theme">Posts</li>
                   <li class="nav-group">
-                    <a class="nav-link nav-group-toggle active" href="">
+                    <a class="nav-link nav-group-toggle" href="">
                       <i class="nav-icon bi-chat"></i>
                       <span>社区分享</span>
                     </a>
                     <ul class="nav-group-items compact">
                       <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'posts:show' %}">
                           <span class="nav-icon"><span class="bi bi-eye"></span></span> 查看游记
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'posts:send' %}">
                           <span class="nav-icon"><span class="bi bi-pencil"></span></span> 发布游记
                         </a>
                       </li>
@@ -477,7 +482,8 @@
         }
           
         </script>
-
+  
+     
         {% block script %}
         <!-- Additional scripts can be added here -->
         

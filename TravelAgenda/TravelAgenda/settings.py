@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'agenda',
     'destinations',
     'dashboard',
+    'posts'
 ]
 
 MIDDLEWARE = [

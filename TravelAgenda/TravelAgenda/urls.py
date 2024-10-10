@@ -27,7 +27,11 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     # dashboard
     path('dashboard/', include('dashboard.urls')),
+    # destinations
+    path('destinations/', include('destinations.urls')),
     # agenda
     path('agenda/', include('agenda.urls')),
+    # posts
+    path('posts/', include('posts.urls')),
 
 ]
