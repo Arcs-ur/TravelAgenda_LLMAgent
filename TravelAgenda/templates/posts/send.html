@@ -17,8 +17,44 @@
 {% block content %}
 <div class="body flex-grow-1">
     <div class="container-lg px-4">
-        <h2>Posts</h2>
-    <p>Here you can post your posts</p>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- 游记标题 -->
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="title-addon">@</span>
+                <input type="text" class="form-control" placeholder="Travel Diary Title" aria-label="Diary Title" aria-describedby="title-addon" required>
+            </div>
+        
+            <!-- 游记内容 -->
+            <div class="input-group mb-3">
+                <span class="input-group-text">Content</span>
+                <textarea class="form-control" aria-label="With textarea" placeholder="Write your travel diary here..." rows="5" required></textarea>
+            </div>
+        
+            <!-- 游记地点 -->
+            <div class="input-group mb-3">
+                <span class="input-group-text">📍</span>
+                <input type="text" class="form-control" placeholder="Travel Location" aria-label="Location" required>
+            </div>
+        
+            <!-- 游记日期 -->
+            <div class="input-group mb-3">
+                <span class="input-group-text">📅</span>
+                <input type="date" class="form-control" aria-label="Date" required>
+            </div>
+        
+            <!-- 图片上传 -->
+            <div class="mb-3">
+                <label for="image-upload" class="form-label">Upload Image</label>
+                <input type="file" class="form-control" id="image-upload" aria-label="Image Upload" accept="image/*" required>
+            </div>
+        
+            <!-- 提交按钮 -->
+            <button type="submit" class="btn btn-primary">Submit Diary Entry</button>
+        </form>
+        
+        
     </div>
 </div>
 

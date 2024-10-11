@@ -126,22 +126,24 @@
                       <span>我的日程</span>
                     </a>
                     <ul class="nav-group-items compact">
+                      
+                      
                       <li class="nav-item">
-                        <a class="nav-link" href="{% url 'agenda:calendar' %}">
-                          <span class="nav-icon"><i class="bi bi-eye"></i></span> 查看日程
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="">
-                          <span class="nav-icon"><i class="bi bi-plus-circle"></i></span> 添加日程
-                        </a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="">
-                          <span class="nav-icon"><i class="bi bi-gear-fill"></i></span> 个性化生成日程
-                          <span class="badge bg-primary ms-auto">NEW</span>
+                        <a class="nav-link" href="{% url 'agenda:LLM' %}">
+                          <span class="nav-icon"><i class="bi bi-star"></i></span> 个性化日程
+                          <span class="badge bg-primary ms-auto">Pro</span>
                         </a>
                        
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agenda:calendar' %}">
+                          <span class="nav-icon"><i class="bi bi-eye"></i></span> 日程管理
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agenda:map' %}">
+                          <span class="nav-icon"><i class="bi-geo-alt"></i></span> 印章地图
+                        </a>
                       </li>
                     </ul>
                   </li>
@@ -202,7 +204,7 @@
             <div class="wrapper d-flex flex-column min-vh-100">
                 <header class="header header-sticky p-0 mb-4">
                   <div class="container-fluid px-4 border-bottom">
-                    <button class="header-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px">
+                    <button class="header-toggler" type="button" onclick="toggleSidebarHidden()" style="margin-inline-start: -14px">
                       <i class="bi bi-list icon-lg"></i>
                     </button>
                     <ul class="header-nav d-none d-md-flex">
@@ -476,11 +478,16 @@
         </script>
 
         <script>
+          
         function toggleSidebarNarrow() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('sidebar-narrow');
         }
-          
+
+        function toggleSidebarHidden() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hide');
+        }
         </script>
   
      

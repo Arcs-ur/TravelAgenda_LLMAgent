@@ -1,37 +1,27 @@
-"""
-URL configuration for TravelAgenda project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include, re_path
-from django.contrib.auth import views as auth_views
 from django.shortcuts import render
 
+# URL patterns
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # website main page
+    # Website main page
     re_path(r'^$', lambda request: render(request, 'accounts/index.html')),
-    # login, register
+    # Login, register
     path('accounts/', include('accounts.urls')),
-    # dashboard
+    # Dashboard
     path('dashboard/', include('dashboard.urls')),
-    # destinations
+    # Destinations
     path('destinations/', include('destinations.urls')),
-    # agenda
+    # Agenda
     path('agenda/', include('agenda.urls')),
-    # posts
+    # Posts
     path('posts/', include('posts.urls')),
-
 ]
+
+# Custom 404 handler
+def custom_404(request, exception=None):
+    return render(request, '404.html', status=404)
+
+# Assign the custom 404 view
+handler404 = custom_404

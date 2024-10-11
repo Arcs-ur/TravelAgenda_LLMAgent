@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Agenda{% endblock %}
+
+
+{% block trace %}
+<div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+            <li class="breadcrumb-item"><span>Home</span></li>
+            <li class="breadcrumb-item"><span>Agenda</span></li>
+            <li class="breadcrumb-item active"><span>Api</span></li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+{% block content %}
+<div class="body flex-grow-1">
+    <div class="container-lg px-4">
+
+            <!-- 第一个表单 -->
+            <div id="step1" class="form-step">
+                <h3>Step 1: Basic Information</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next</button>
+                </form>
+            </div>
+        
+            <!-- 第二个表单 -->
+            <div id="step2" class="form-step" style="display:none;">
+                <h3>Step 2: Contact Information</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next</button>
+                </form>
+            </div>
+        
+            <!-- 第三个表单 -->
+            <div id="step3" class="form-step" style="display:none;">
+                <h3>Step 3: Confirmation</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="confirm" class="form-label">Are you sure?</label>
+                        <select class="form-control" id="confirm">
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% block script%}
+<script>
+    function nextStep(step) {
+        document.querySelectorAll('.form-step').forEach(function(stepDiv) {
+            stepDiv.style.display = 'none';
+        });
+        document.getElementById('step' + step).style.display = 'block';
+    }
+
+    function prevStep(step) {
+        document.querySelectorAll('.form-step').forEach(function(stepDiv) {
+            stepDiv.style.display = 'none';
+        });
+        document.getElementById('step' + step).style.display = 'block';
+    }
+</script>
+{% endblock %}
