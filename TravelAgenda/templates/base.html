@@ -103,6 +103,11 @@
                       </li>
                     </ul>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'agenda:map' %}">
+                      <span class="nav-icon"><i class="bi-geo-alt"></i></span> 印章地图
+                    </a>
+                  </li>
                   
                   <!-- <li class="nav-item">
                     <a class="nav-link" href="">
@@ -119,7 +124,13 @@
                   </li> -->
               
                   <li class="nav-title" data-coreui-i18n="components">Agenda</li>
-              
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'agenda:LLM' %}">
+                      <span class="nav-icon"><i class="bi bi-star"></i></span> 个性化攻略推荐
+                      <span class="badge bg-primary ms-auto">Pro</span>
+                    </a>
+                   
+                  </li>
                   <li class="nav-group">
                     <a class="nav-link nav-group-toggle" href="">
                       <i class="nav-icon bi-calendar"></i>
@@ -128,24 +139,20 @@
                     <ul class="nav-group-items compact">
                       
                       
-                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'agenda:LLM' %}">
-                          <span class="nav-icon"><i class="bi bi-star"></i></span> 个性化日程
-                          <span class="badge bg-primary ms-auto">Pro</span>
-                        </a>
-                       
-                      </li>
+                      
                       <li class="nav-item">
                         <a class="nav-link" href="{% url 'agenda:calendar' %}">
-                          <span class="nav-icon"><i class="bi bi-eye"></i></span> 日程管理
+                          <span class="nav-icon"><i class="bi bi-eye"></i></span> 日历视图
                         </a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="{% url 'agenda:map' %}">
-                          <span class="nav-icon"><i class="bi-geo-alt"></i></span> 印章地图
+                        <a class="nav-link" href="{% url 'agenda:myagenda' %}">
+                          <span class="nav-icon"><i class="bi bi-credit-card"></i></span> 管理日程
                         </a>
                       </li>
+                      
                     </ul>
+                    
                   </li>
                   
                   <li class="nav-title" data-coreui-i18n="theme">Posts</li>
@@ -160,9 +167,14 @@
                           <span class="nav-icon"><span class="bi bi-eye"></span></span> 查看游记
                         </a>
                       </li>
-                      <li class="nav-item">
+                      <!-- <li class="nav-item">
                         <a class="nav-link" href="{% url 'posts:send' %}">
                           <span class="nav-icon"><span class="bi bi-pencil"></span></span> 发布游记
+                        </a>
+                      </li> -->
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'posts:send' %}">
+                          <span class="nav-icon"><span class="bi bi-pencil"></span></span> 我的游记
                         </a>
                       </li>
                     </ul>

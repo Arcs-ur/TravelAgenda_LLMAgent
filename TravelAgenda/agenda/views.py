@@ -11,3 +11,6 @@ def agenda_map(request):
 
 def agenda_LLM(request):
     return render(request, 'agenda/LLM.html')
+
+def agenda_my(request):
+    return render(request, 'agenda/myagenda.html')
