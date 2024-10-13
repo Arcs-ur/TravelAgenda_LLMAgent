@@ -1,0 +1,30 @@
+<!-- templates/posts/post_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container-lg px-4">
+    <h1>{{ post.title }}</h1>
+    <p>By {{ post.user.username }} on {{ post.created_at|date:"M d, Y H:i" }}</p>
+    <p>{{ post.content }}</p>
+
+    <!-- Display Images -->
+    <div class="row">
+        {% for image in images %}
+        <div class="col-md-4">
+            <img src="{{ image.image.url }}" class="img-fluid mb-2" alt="Post Image">
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Like Button -->
+    <form method="post" action="{% url 'posts:like_post' post.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary">Like ({{ post.likes }})</button>
+    </form>
+
+    <!-- Back to All Posts -->
+    <a href="{% url 'posts:post_list' %}" class="btn btn-secondary mt-3">Back to All Posts</a>
+</div>
+{% endblock %}

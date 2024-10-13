@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.shortcuts import render
-
+from django.conf import settings
+from django.conf.urls.static import static
 # URL patterns
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,7 +18,7 @@ urlpatterns = [
     path('agenda/', include('agenda.urls')),
     # Posts
     path('posts/', include('posts.urls')),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Custom 404 handler
 def custom_404(request, exception=None):
