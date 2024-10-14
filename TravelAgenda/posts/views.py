@@ -9,9 +9,10 @@ from rest_framework.response import Response
 
 from django.contrib.auth.decorators import login_required
 
-from django.views.generic import ListView,CreateView
+from django.views.generic import ListView,CreateView,DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin 
 
+from django.db.models import Q
 from .serializers import PostSerializer, ImageSerializer
 from .models import Post, Image
 from .forms import PostForm
@@ -22,7 +23,13 @@ class PostListView(LoginRequiredMixin,ListView):
     template_name = 'posts/post_list.html'  
     context_object_name = 'posts'  
     ordering = ['-created_at']  
-    paginate_by = 10  
+    paginate_by = 4
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')  
+        if query:
+            queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
+        return queryset
 
 # 用户新增帖子
 class PostSendView(LoginRequiredMixin, CreateView):
@@ -45,10 +52,16 @@ class PostSendView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('posts:post_detail', kwargs={'pk': self.object.pk})
 
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    images = post.images.all()
-    return render(request, 'posts/post_detail.html', {'post': post, 'images': images})
+# 每个帖子的详情展示页面
+class PostDetailView(LoginRequiredMixin,DetailView):
+    model = Post
+    template_name = 'posts/post_detail.html'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['images'] = self.object.images.all()
+        return context
 
 
 
@@ -57,23 +70,9 @@ def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.likes += 1
     post.save()
-    return HttpResponseRedirect(reverse('posts:post_detail', args=[str(pk)]))
+    return HttpResponseRedirect(reverse('posts:post_list'))
 
-# @login_required
-# def post_send(request):
-#     if request.method == 'POST':
-#         title = request.POST.get('title')
-#         content = request.POST.get('content')
-#         images = request.FILES.getlist('images')
 
-#         post = Post.objects.create(user=request.user, title=title, content=content)
-
-#         for image in images:
-#             Image.objects.create(post=post, image=image)
-
-#         return redirect('posts:post_detail', pk=post.pk)
-#     else:
-#         return render(request, 'posts/send.html')
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')

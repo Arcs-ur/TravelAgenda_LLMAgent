@@ -2,29 +2,58 @@
 {% extends 'base.html' %}
 
 {% block title %}{{ post.title }}{% endblock %}
-
+{% block trace %}
+<div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+            <li class="breadcrumb-item"><span>Home</span></li>
+            <li class="breadcrumb-item"><span>Posts</span></li>
+            <li class="breadcrumb-item active"><span>Details</span></li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 {% block content %}
 <div class="container-lg px-4">
-    <h1>{{ post.title }}</h1>
-    <p>By {{ post.user.username }} on {{ post.created_at|date:"M d, Y H:i" }}</p>
-    <p>{{ post.content }}</p>
-
-    <!-- Display Images -->
-    <div class="row">
-        {% for image in images %}
-        <div class="col-md-4">
-            <img src="{{ image.image.url }}" class="img-fluid mb-2" alt="Post Image">
+    <div class="card">
+        <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="true">帖子详情</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+            </li>
+          </ul>
         </div>
-        {% endfor %}
-    </div>
+        <div class="card-body">
+          <h5 class="card-title">{{ post.title }}</h5>
+          <p class="card-text">{{ post.content }}</p>
+          
+          <p class="card-text"><small class="text-body-secondary">By {{ post.user.username }} on {{ post.created_at|date:"M d, Y H:i" }}</small></p>
 
-    <!-- Like Button -->
-    <form method="post" action="{% url 'posts:like_post' post.pk %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary">Like ({{ post.likes }})</button>
-    </form>
+        </div>
+        <div class="container">
+            <div class="row">
+                {% for image in images|slice:":9" %}
+                <div class="col-4 mb-2"> <!-- 4 columns per image, fits 3 images per row (12/4 = 3) -->
+                    <img src="{{ image.image.url }}" class="img-fluid" alt="Post Image">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Back to All Posts -->
+        <a href="{% url 'posts:post_list' %}" class="btn btn-primary">Back to All Posts</a>
+      </div>
+    
 
-    <!-- Back to All Posts -->
-    <a href="{% url 'posts:post_list' %}" class="btn btn-secondary mt-3">Back to All Posts</a>
+    
+    
+
+    
 </div>
 {% endblock %}

@@ -1,40 +1,67 @@
 <!-- templates/posts/post_list.html -->
 {% extends 'base.html' %}
 
-{% block title %}All Posts{% endblock %}
-
+{% block title %} 
+    Posts Show
+{% endblock %}
+{% block trace %}
+<div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+            <li class="breadcrumb-item"><span>Home</span></li>
+            <li class="breadcrumb-item"><span>Posts</span></li>
+            <li class="breadcrumb-item active"><span>Lists</span></li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 {% block content %}
 <div class="container-lg px-4">
-    <h1>All Posts</h1>
+    <header class="header">
+        <a class="header-brand">游记</a>
+        <form class="d-flex" method="get" action="{% url 'posts:post_list' %}">
+            <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ request.GET.q }}">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        
+    </header>
 
-    {% for post in posts %}
-    <div class="card mb-4">
-        <div class="card-header">
-            <h2>{{ post.title }}</h2>
-            <p>By {{ post.user.username }} on {{ post.created_at|date:"M d, Y H:i" }}</p>
-        </div>
-        <div class="card-body">
-            <p>{{ post.content|truncatewords:30 }}</p>
-            <!-- Display first image if exists -->
-            {% if post.images.all %}
-            <div class="mb-3">
-                {% for image in post.images.all %}
-                <img src="{{ image.image.url }}" class="img-fluid mb-2" alt="Post Image">
-                {% endfor %}
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 d-flex flex-column"> <!-- Make cards same height and align content -->
+                <div class="card-body flex-grow-1"> <!-- Allow body to grow and take available space -->
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.content|truncatechars:300 }}</p>
+
+                    <p class="card-text"><small class="text-body-secondary">By {{ post.user.username }} on {{ post.created_at|date:"M d, Y H:i" }}</small></p>
+                    
+                    {% if post.images.all %}
+                    <div class="image-container mb-3">
+                        {% for image in post.images.all %}
+                        <img src="{{ image.image.url }}" class="img-thumbnail" alt="Post Image">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <a href="{% url 'posts:post_detail' post.pk %}" class="btn btn-primary">Read More</a>
+                <div class="card-footer text-muted mt-auto">
+                    
+                    <form method="post" action="{% url 'posts:like_post' post.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">Like ({{ post.likes }})</button>
+                    </form>
+                </div>
             </div>
-            {% endif %}
-            <a href="{% url 'posts:post_detail' post.pk %}" class="btn btn-primary">Read More</a>
         </div>
-        <div class="card-footer text-muted">
-            <form method="post" action="{% url 'posts:like_post' post.pk %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-primary">Like ({{ post.likes }})</button>
-            </form>
-        </div>
+        {% empty %}
+        <header class="header">
+            <span class="header-text">
+                还没有人发布帖子哦
+            </span>
+        </header>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>No posts available.</p>
-    {% endfor %}
 
     <!-- Pagination controls -->
     {% if is_paginated %}
@@ -42,7 +69,7 @@
         <ul class="pagination">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Previous</a>
             </li>
             {% endif %}
 
@@ -53,18 +80,34 @@
             </li>
             {% else %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                <a class="page-link" href="{{ request.path }}?page={{ num }}">{{ num }}</a>
             </li>
             {% endif %}
             {% endfor %}
 
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">Next</a>
             </li>
             {% endif %}
         </ul>
     </nav>
+
     {% endif %}
 </div>
+
 {% endblock %}
+{% block css %}
+<style>
+    .image-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* Space between images */
+    }
+    .image-container img {
+        max-width: 200px; /* Adjust the size of the images */
+        max-height: 150px;
+    }
+</style>
+{% endblock %}
+
