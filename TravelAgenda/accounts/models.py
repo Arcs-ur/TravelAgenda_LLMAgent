@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
         help_text="Specific permissions for this user.",
         verbose_name="user permissions",
     )
-    phone_number = models.CharField(max_length=15, blank=False, null=False)
+    phone_number = models.CharField(max_length=15, blank=False, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     def __str__(self):
