@@ -1,5 +1,5 @@
 from django.db import models
-#这部分的需求是面向对象记录，对象是帖子，数据库的内容要包括：1.帖子的发布者，2.帖子的内容，3，帖子的发布时间，4.帖子的点赞数
+#这部分的需求是面向对象记录，对象是帖子，数据库的内容要包括：1.帖子的发布者，2.帖子的标题与内容，3，帖子的发布时间，4.帖子的点赞数 5.外键帖子的图片
 from django.contrib.auth import get_user_model
 
 class Post(models.Model):
