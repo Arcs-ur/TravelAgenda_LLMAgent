@@ -131,8 +131,9 @@
                     </a>
                    
                   </li>
+
                   <li class="nav-group">
-                    <a class="nav-link nav-group-toggle" href="">
+                    <a class="nav-link nav-group-toggle" href="{% url 'agenda:calendar' %}">
                       <i class="nav-icon bi-calendar"></i>
                       <span>我的日程</span>
                     </a>
@@ -141,7 +142,7 @@
                       
                       
                       <li class="nav-item">
-                        <a class="nav-link" href="{% url 'agenda:calendar' %}">
+                        <a class="nav-link" href="{% url 'agenda:main' %}">
                           <span class="nav-icon"><i class="bi bi-eye"></i></span> 日历视图
                         </a>
                       </li>
