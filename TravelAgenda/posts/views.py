@@ -6,6 +6,8 @@ from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.generics import CreateAPIView
 
 from django.contrib.auth.decorators import login_required
 
@@ -13,7 +15,7 @@ from django.views.generic import ListView,CreateView,DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin 
 
 from django.db.models import Q
-from .serializers import PostSerializer, ImageSerializer
+from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
 from .models import Post, Image
 from .forms import PostForm
 
@@ -38,19 +40,25 @@ class PostSendView(LoginRequiredMixin, CreateView):
     template_name = 'posts/send.html'
     
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        self.object = form.save()
+        serializer = PostSendSerializer(data={
+            'title': form.cleaned_data['title'],
+            'content': form.cleaned_data['content'],
+            'images': self.request.FILES.getlist('images')
+        })
         
-        # 上传图片
-        images = self.request.FILES.getlist('images')
-        for image in images:
-            Image.objects.create(post=self.object, image=image)
-        
-        # 上传帖子成功到post_detail页面
-        return redirect('posts:post_detail', pk=self.object.pk)
-
-    def get_success_url(self):
-        return reverse('posts:post_detail', kwargs={'pk': self.object.pk})
+        if serializer.is_valid():
+            serializer.save(user=self.request.user) 
+            return redirect('posts:post_list')
+        return self.form_invalid(form, serializer.errors)
+    
+    def form_invalid(self, form, errors=None):
+        context = self.get_context_data(form=form)
+        if errors:
+            form.errors.update(errors)
+        return self.render_to_response(context)
+    
+    # def get_success_url(self):
+    #     return reverse('posts:post_detail', kwargs={'pk': self.object.pk})
 
 # 每个帖子的详情展示页面
 class PostDetailView(LoginRequiredMixin,DetailView):
@@ -65,6 +73,7 @@ class PostDetailView(LoginRequiredMixin,DetailView):
 
 
 
+
 @login_required
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -73,7 +82,7 @@ def like_post(request, pk):
     return HttpResponseRedirect(reverse('posts:post_list'))
 
 
-
+# 获取帖子
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
@@ -91,7 +100,20 @@ class PostViewSet(viewsets.ModelViewSet):
             Image.objects.create(post=post, image=file)
         return Response({'status': 'images uploaded'})
 
+# 获取图片
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+# 用户发送帖子
+# class PostCreateAPIView(CreateAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
