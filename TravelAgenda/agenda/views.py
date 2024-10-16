@@ -3,6 +3,7 @@ from .models import Agenda, AgendaLocation
 from django.shortcuts import redirect,get_object_or_404
 from .forms import *
 from datetime import datetime
+from datetime import timedelta
 # def agenda_main(request):
 #     return render(request, 'agenda/main.html')
 
@@ -83,7 +84,7 @@ def calendar_view(request):
             events.append({
                 'title': agenda.title,
                 'start': agendalocation.arrival_time.isoformat(),  # 日期格式化为ISO 8601
-                'end': agendalocation.arrival_time.isoformat(),  # 事件结束时间, 假设为到达时间2小时后
+                'end': (agendalocation.arrival_time + timedelta(hours=2)).isoformat(),  # 事件结束时间, 假设为到达时间2小时后
                 'description': agendalocation.commute_info,  # 显示通勤信息
                 'location': f"{agendalocation.departure_location.name} - {agendalocation.arrival_location.name}"
             })

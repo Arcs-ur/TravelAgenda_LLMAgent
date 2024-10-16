@@ -44,25 +44,30 @@
 
 {% block script %}
 <script src="{% static 'vendors/fullcalendar/js/index.global.min.js' %}"></script>
-
+<script id="event-data" type="application/json">
+  {{ events|json_script:"event-data" }}
+</script>
 <!-- 将传递的事件数据加载到 FullCalendar 中 -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     
+    // 从 JSON 中获取事件数据
+    var events = JSON.parse(document.getElementById('event-data').textContent);
+    
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',  // 默认月视图
-      events: { events }, // 通过 Django 模板传递的事件数据
-      eventClick: function(info) {
-        alert('Event: ' + info.event.title + '\n' + 
-              'Location: ' + info.event.extendedProps.location + '\n' +
-              'Description: ' + info.event.extendedProps.description);
-      }
+      events: events,  // 通过 Django 模板传递的事件数据
+      // eventClick: function(info) {
+      //   alert('Event: ' + info.event.title );
+      // }
     });
     calendar.render();
   });
 </script>
-
+<!-- + '\n' + 'Location: ' + info.event.extendedProps.location -->
+<!-- + '\n' +
+'Description: ' + info.event.extendedProps.description -->
 <!-- 包含你的其他 JS 文件 -->
 <script src="{% static 'js/calendar.js' %}"></script>
 {% endblock %}

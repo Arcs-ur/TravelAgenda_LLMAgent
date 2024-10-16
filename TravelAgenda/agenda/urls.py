@@ -4,7 +4,8 @@ from django.contrib.auth import views as auth_views
 app_name = 'agenda'
 urlpatterns = [
     path('', views.agenda_main, name='main'),
-    path('calendar', views.agenda_calendar, name='calendar'),
+    # path('calendar', views.agenda_calendar, name='calendar'),
+    path('calendar', views.calendar_view, name='calendar'),
     path('calendar_view', views.calendar_view, name='calendar_view'),
     path('LLM', views.agenda_LLM, name='LLM'),
     path('map', views.agenda_map, name='map'),
