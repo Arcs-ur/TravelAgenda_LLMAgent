@@ -3,19 +3,19 @@
 ## 文件夹内容说明
 1. accounts
 用户账户管理模块的app
-
+database added
 2. agenda
 日程管理模板的app
-
+database added
 3. dashboard
 仪表盘（用户登录进去看到的页面）
 
 4. destinations
 旅游景点，酒店，餐厅，购物展示以及交通
-
+database added
 5. posts
 发帖子模块的app
-
+database added
 6. static静态文件
 home_assets是初始页面的和旅游推荐系统没关系
 
