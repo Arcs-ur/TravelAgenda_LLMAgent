@@ -7,7 +7,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView,ListAPIView
 
 from django.contrib.auth.decorators import login_required
 
@@ -33,6 +33,20 @@ class PostListView(LoginRequiredMixin,ListView):
             queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
         return queryset
 
+# 查看自己的帖子
+class MyPostListView(LoginRequiredMixin,ListView):
+    model = Post
+    template_name = 'posts/my_post.html'  
+    context_object_name = 'posts'  
+    ordering = ['-created_at']  
+    paginate_by = 4
+    def get_queryset(self):
+        queryset = Post.objects.filter(user=self.request.user)
+        query = self.request.GET.get('q')  
+        if query:
+            queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
+        return queryset
+    
 # 用户新增帖子
 class PostSendView(LoginRequiredMixin, CreateView):
     model = Post

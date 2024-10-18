@@ -10,6 +10,7 @@ router.register(r'images', views.ImageViewSet)
 
 urlpatterns = [
     path('list', views.PostListView.as_view(), name='post_list'),
+    path('mypost', views.MyPostListView.as_view(), name='my_post'),
     path('send', views.PostSendView.as_view(), name='send'),
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
     path('post/<int:pk>/like/', views.like_post, name='like_post'),
