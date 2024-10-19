@@ -3,22 +3,35 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django import forms
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super(CustomUserCreationForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
 
 def register_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-        
-        if password1 == password2:
-            user = User.objects.create_user(username=username, email=email, password=password1)
-            user.save()
-            #login(request, user)  # Log in the user after registration
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()  # 自动处理用户的创建和密码加密
             messages.success(request, 'Registration successful!')
             return redirect('accounts:login')
         else:
-            messages.error(request, 'Passwords do not match!')
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'accounts/register.html', {'form': form})
 
     return render(request, 'accounts/register.html')  
 

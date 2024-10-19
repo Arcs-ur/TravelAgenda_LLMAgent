@@ -14,5 +14,7 @@ urlpatterns = [
     path('send', views.PostSendView.as_view(), name='send'),
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
     path('post/<int:pk>/like/', views.like_post, name='like_post'),
+    path('post/delete/<int:post_id>/', views.delete_post, name='delete_post'),
+    path('posts/batch-delete/', views.batch_delete_posts, name='batch_delete_posts'),
     path('', include(router.urls)),
 ]
