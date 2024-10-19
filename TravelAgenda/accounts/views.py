@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
+<<<<<<< HEAD
 from django import forms
 
 class CustomUserCreationForm(UserCreationForm):
@@ -18,11 +19,15 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+=======
+from .forms import CustomUserCreationForm  # 导入自定义表单
+>>>>>>> b9419b7 (add password rules)
 
 def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+<<<<<<< HEAD
             form.save()  # 自动处理用户的创建和密码加密
             messages.success(request, 'Registration successful!')
             return redirect('accounts:login')
@@ -32,8 +37,23 @@ def register_view(request):
         form = CustomUserCreationForm()
     
     return render(request, 'accounts/register.html', {'form': form})
+=======
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)  # 注册后自动登录
+            messages.success(request, 'Registration successful!')
+            return redirect('accounts:login')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = CustomUserCreationForm()
+>>>>>>> b9419b7 (add password rules)
 
-    return render(request, 'accounts/register.html')  
+    return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':

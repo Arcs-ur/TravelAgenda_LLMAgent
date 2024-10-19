@@ -54,13 +54,15 @@
                             <p class="text-body-secondary">Create your account</p>
                             <form method="POST" action="{% url 'accounts:register' %}">
                                 {% csrf_token %}
+                                {{ form.non_field_errors }}
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
                                         <svg class="icon">
                                             <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-user' %}"></use>
                                         </svg>
                                     </span>
-                                    <input class="form-control" type="text" name="username" placeholder="Username" required>
+                                    {{ form.username }}
+                                    {{ form.username.errors }}
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
@@ -68,7 +70,8 @@
                                             <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-envelope-open' %}"></use>
                                         </svg>
                                     </span>
-                                    <input class="form-control" type="email" name="email" placeholder="Email" required>
+                                    {{ form.email }}
+                                    {{ form.email.errors }}
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
@@ -76,7 +79,8 @@
                                             <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-lock-locked' %}"></use>
                                         </svg>
                                     </span>
-                                    <input class="form-control" type="password" name="password1" placeholder="Password" required>
+                                    {{ form.password1 }}
+                                    {{ form.password1.errors }}
                                 </div>
                                 <div class="input-group mb-4">
                                     <span class="input-group-text">
@@ -84,7 +88,8 @@
                                             <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-lock-locked' %}"></use>
                                         </svg>
                                     </span>
-                                    <input class="form-control" type="password" name="password2" placeholder="Repeat password" required>
+                                    {{ form.password2 }}
+                                    {{ form.password2.errors }}
                                 </div>
                                 <button class="btn btn-block btn-success" type="submit">Create Account</button>
                             </form>
