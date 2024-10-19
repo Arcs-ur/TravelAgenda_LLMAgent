@@ -90,10 +90,9 @@ def calendar_view(request):
     events = []
     for agendalocation in agendalocations:
         events.append(({
-            "id":agendalocation.agenda.title + agendalocation.commute_info + f"{agendalocation.departure_location.name} - {agendalocation.arrival_location.name}",
             "title":agendalocation.agenda.title + agendalocation.commute_info + f"{agendalocation.departure_location.name} - {agendalocation.arrival_location.name}",
             "start":agendalocation.arrival_time.isoformat(),  # 日期格式化为ISO 8601
-            "end":(agendalocation.arrival_time + timedelta(hours=2)).isoformat()  # 事件结束时间, 假设为到达时间2小时后
+            "end":(agendalocation.arrival_time + timedelta(hours=2)).isoformat(),  # 事件结束时间, 假设为到达时间2小时后
             }
         ))
     events_json = json.dumps(events)
