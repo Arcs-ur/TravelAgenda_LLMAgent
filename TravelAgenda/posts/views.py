@@ -1,5 +1,5 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponseRedirect
+from django.shortcuts import render,redirect,get_object_or_404,get_list_or_404
+from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.urls import reverse
 
 from rest_framework import viewsets, permissions
@@ -25,7 +25,7 @@ class PostListView(LoginRequiredMixin,ListView):
     template_name = 'posts/post_list.html'  
     context_object_name = 'posts'  
     ordering = ['-created_at']  
-    paginate_by = 4
+    paginate_by = 10
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')  
@@ -39,7 +39,7 @@ class MyPostListView(LoginRequiredMixin,ListView):
     template_name = 'posts/my_post.html'  
     context_object_name = 'posts'  
     ordering = ['-created_at']  
-    paginate_by = 4
+    paginate_by = 10
     def get_queryset(self):
         queryset = Post.objects.filter(user=self.request.user)
         query = self.request.GET.get('q')  
@@ -95,7 +95,33 @@ def like_post(request, pk):
     post.save()
     return HttpResponseRedirect(reverse('posts:post_list'))
 
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    # 检查当前用户是否是发布者，防止其他用户删除帖子
+    if post.user != request.user:
+        return HttpResponseForbidden("You are not allowed to delete this post.")
+    post.delete()
+    return redirect(reverse('posts:my_post'))
 
+@login_required
+def batch_delete_posts(request):
+    if request.method == 'POST':
+        # 获取提交的选中的帖子ID列表
+        selected_post_ids = request.POST.get('selected_posts').split(',')
+
+        # 获取这些帖子，并确保只删除当前用户发布的帖子
+        posts_to_delete = get_list_or_404(Post, id__in=selected_post_ids, user=request.user)
+
+        # 删除选中的帖子
+        for post in posts_to_delete:
+            post.delete()
+
+        # 删除后重定向到帖子列表页面
+        return redirect('posts:my_post')
+    else:
+        return HttpResponseForbidden("Invalid request method.")
+    
 # 获取帖子
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
