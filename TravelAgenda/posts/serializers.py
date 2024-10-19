@@ -18,7 +18,7 @@ class PostSendSerializer(serializers.ModelSerializer):
     images = serializers.ListField(
         child=serializers.ImageField(allow_empty_file=False),
         required=False, 
-        write_only=True  # Prevents image data from being returned in responses
+        write_only=True 
     )
 
     class Meta:
@@ -40,8 +40,7 @@ class PostSendSerializer(serializers.ModelSerializer):
         images = validated_data.pop('images', [])
         post = Post.objects.create(**validated_data)
         
-        # Save each image associated with the post
         for image in images:
-            Image.objects.create(post=post, image=image)  # Assuming Image model has a 'post' FK and 'image' field
+            Image.objects.create(post=post, image=image)  
 
         return post

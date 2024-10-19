@@ -16,5 +16,6 @@ urlpatterns = [
     path('post/<int:pk>/like/', views.like_post, name='like_post'),
     path('post/delete/<int:post_id>/', views.delete_post, name='delete_post'),
     path('posts/batch-delete/', views.batch_delete_posts, name='batch_delete_posts'),
+    path('post/<int:pk>/edit/',views.PostUpdateView.as_view(), name='post_edit'),
     path('', include(router.urls)),
 ]

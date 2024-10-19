@@ -1,23 +1,24 @@
 from django.shortcuts import render,redirect,get_object_or_404,get_list_or_404
 from django.http import HttpResponseRedirect,HttpResponseForbidden
-from django.urls import reverse
-
+from django.urls import reverse, reverse_lazy
+from django.contrib import messages
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import CreateAPIView,ListAPIView
+from django.forms import modelformset_factory
 
 from django.contrib.auth.decorators import login_required
 
-from django.views.generic import ListView,CreateView,DetailView
+from django.views.generic import ListView,CreateView,DetailView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin 
 
 from django.db.models import Q
 from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
 from .models import Post, Image
-from .forms import PostForm
+from .forms import PostForm,ImageForm,PostSendForm
 
 # 查看所有用户的帖子
 class PostListView(LoginRequiredMixin,ListView):
@@ -50,7 +51,7 @@ class MyPostListView(LoginRequiredMixin,ListView):
 # 用户新增帖子
 class PostSendView(LoginRequiredMixin, CreateView):
     model = Post
-    form_class = PostForm
+    form_class = PostSendForm
     template_name = 'posts/send.html'
     
     def form_valid(self, form):
@@ -71,9 +72,40 @@ class PostSendView(LoginRequiredMixin, CreateView):
             form.errors.update(errors)
         return self.render_to_response(context)
     
-    # def get_success_url(self):
-    #     return reverse('posts:post_detail', kwargs={'pk': self.object.pk})
+# 用户修改帖子
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'posts/edit.html'
+    success_url = reverse_lazy('posts:my_post')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ImageFormSet = modelformset_factory(Image, form=ImageForm, extra=1, can_delete=True)
+        if self.request.POST:
+            context['image_formset'] = ImageFormSet(self.request.POST, self.request.FILES, queryset=self.object.images.all())
+        else:
+            context['image_formset'] = ImageFormSet(queryset=self.object.images.all())
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        image_formset = context['image_formset']
+
+        # Validate images
+        if image_formset.is_valid():
+            total_images = self.object.images.count() + len(image_formset.new_objects)
+            if total_images > 9:
+                form.add_error(None, 'You cannot upload more than 9 images for a post.')
+                return self.form_invalid(form)
+
+            self.object = form.save()
+            image_formset.instance = self.object
+            image_formset.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
+        
 # 每个帖子的详情展示页面
 class PostDetailView(LoginRequiredMixin,DetailView):
     model = Post
@@ -107,20 +139,21 @@ def delete_post(request, post_id):
 @login_required
 def batch_delete_posts(request):
     if request.method == 'POST':
-        # 获取提交的选中的帖子ID列表
-        selected_post_ids = request.POST.get('selected_posts').split(',')
+        selected_post_ids = request.POST.get('selected_posts', '')
+        if not selected_post_ids:
+            messages.warning(request, 'No posts were selected for deletion.')
+            return redirect('posts:my_post')
+        selected_post_ids = selected_post_ids.split(',')
+        posts_to_delete = Post.objects.filter(id__in=selected_post_ids, user=request.user)
 
-        # 获取这些帖子，并确保只删除当前用户发布的帖子
-        posts_to_delete = get_list_or_404(Post, id__in=selected_post_ids, user=request.user)
-
-        # 删除选中的帖子
-        for post in posts_to_delete:
-            post.delete()
-
-        # 删除后重定向到帖子列表页面
+        if posts_to_delete.exists():
+            posts_to_delete.delete()
+            messages.success(request, 'Selected posts deleted successfully!')
+        else:
+            messages.warning(request, 'No valid posts were found for deletion.')
         return redirect('posts:my_post')
-    else:
-        return HttpResponseForbidden("Invalid request method.")
+    messages.error(request, 'Invalid request method.')
+    return redirect('posts:my_post')
     
 # 获取帖子
 class PostViewSet(viewsets.ModelViewSet):
