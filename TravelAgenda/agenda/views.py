@@ -34,6 +34,10 @@ def delete_agenda(request, id):
     agenda.delete()
     return redirect('agenda:agenda_list')
 
+def delete_agendalocation(request, id):
+    loc = get_object_or_404(AgendaLocation, id=id)
+    loc.delete()
+    return redirect('agenda:agenda_list')
 # def update_agenda(request, id):
 #     agenda = get_object_or_404(Agenda, id=id)
 #     if request.method == 'POST':
@@ -58,10 +62,28 @@ def update_agenda(request, id):
         agenda_form = AgendaForm(instance=agenda)
     
     # 动态渲染更新页面，传递 Agenda 数据到模板
-    return render(request, 'agenda/update.html', {
+    return render(request, 'agenda/update_Travelagenda.html', {
         'agenda_form': agenda_form,
         'agenda': agenda,  # 传递当前日程对象
     })
+
+def update_agendalocation(request,id):
+    loc = get_object_or_404(AgendaLocation, id=id)  # 获取 AgendaLocation 对象
+    agenda = loc.agenda
+    if request.method == 'POST':
+        agenda_form = AgendaForm(request.POST, instance=loc)  # 使用 AgendaLocationForm
+        if agenda_form.is_valid():
+            agenda_form.save()
+            return redirect('agenda:agenda_list')  # 更新后重定向到日程列表页面
+    else:
+        agenda_form = AgendaLocationForm(instance=loc)  # 传递当前 AgendaLocation 实例
+    
+    # 动态渲染更新页面，传递 AgendaLocation 数据到模板
+    return render(request, 'agenda/update_agenda.html', {
+        'agenda_form': agenda_form,
+        'location': loc,  # 传递当前 AgendaLocation 对象
+    })
+
 
 def add_agenda(request):
     if request.method == 'POST':
