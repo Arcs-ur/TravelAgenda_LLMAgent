@@ -7,7 +7,11 @@ class Post(models.Model):
     title = models.TextField() # 帖子的标题
     content = models.TextField()  # 帖子的内容
     created_at = models.DateTimeField(auto_now_add=True)  # 帖子的发布时间
-    likes = models.PositiveIntegerField(default=0)  # 帖子的点赞数
+    likes = models.ManyToManyField(get_user_model(), related_name='liked_posts', blank=True)  # Users who liked the post
+
+    def total_likes(self):
+        return self.likes.count()
+    #likes = models.PositiveIntegerField(default=0)  # 帖子的点赞数
 
     def __str__(self):
         return f"Post by {self.user.username} at {self.created_at}"

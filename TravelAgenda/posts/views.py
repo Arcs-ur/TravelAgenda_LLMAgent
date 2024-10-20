@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404,get_list_or_404
-from django.http import HttpResponseRedirect,HttpResponseForbidden
+from django.http import HttpResponseRedirect,HttpResponseForbidden,JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from rest_framework import viewsets, permissions
@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.views.generic import ListView,CreateView,DetailView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin 
-
+from django.db import transaction
 from django.db.models import Q
 from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
 from .models import Post, Image
@@ -120,12 +120,39 @@ class PostDetailView(LoginRequiredMixin,DetailView):
 
 
 
+# @login_required
+# def like_post(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+#     post.likes += 1
+#     post.save()
+#     return HttpResponseRedirect(reverse('posts:post_list'))
+# @login_required
+# @transaction.atomic
+# def like_post(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+    
+#     if request.user in post.likes.all():
+#         post.likes.remove(request.user)  # User already liked the post, so unlike it
+#     else:
+#         post.likes.add(request.user)  # Like the post
+
+#     return redirect('posts:post_list') 
 @login_required
+@transaction.atomic
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    post.likes += 1
-    post.save()
-    return HttpResponseRedirect(reverse('posts:post_list'))
+    liked = False
+
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    return JsonResponse({
+        'liked': liked,
+        'total_likes': post.likes.count(),
+    })
 
 @login_required
 def delete_post(request, post_id):
