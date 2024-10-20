@@ -3,37 +3,27 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django import forms
 
-class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'password1', 'password2')
-
-    def save(self, commit=True):
-        user = super(CustomUserCreationForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-        return user
+from .forms import CustomUserCreationForm  # 导入自定义表单
 
 def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()  # 自动处理用户的创建和密码加密
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)  # 注册后自动登录
             messages.success(request, 'Registration successful!')
             return redirect('accounts:login')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         form = CustomUserCreationForm()
-    
     return render(request, 'accounts/register.html', {'form': form})
-
-    return render(request, 'accounts/register.html')  
 
 def login_view(request):
     if request.method == 'POST':

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}修改游记{% endblock %}
+{% block trace %}
+<div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+            <li class="breadcrumb-item"><span>Home</span></li>
+            <li class="breadcrumb-item"><span>Posts</span></li>
+            <li class="breadcrumb-item"><span>My Posts</span></li>
+            <li class="breadcrumb-item active"><span>Edit</span></li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+{% block content %}
+<div class="container-lg px-4">
+  <div class="card">
+     
+      <h5 class="card-header text-center">
+          <i class="bi bi-pencil"></i> 修改游记
+      </h5>
+      <!-- <h5 class="card-header">Featured</h5> -->
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <!-- Post Title -->
+          <div class="input-group mb-3">
+              <span class="input-group-text" id="title-addon">@</span>
+              <input type="text" class="form-control" name="title" placeholder="Post Title" aria-label="Post Title" aria-describedby="title-addon" value="{{ form.title.value }}" required>
+          </div>
+      
+          <!-- Post Content -->
+          <div class="input-group mb-3">
+              <span class="input-group-text">Content</span>
+              <textarea class="form-control" id="post-content" name="content" aria-label="With textarea" placeholder="Write your post here..." rows="5" required>{{ form.content.value }}</textarea>
+          </div>
+          <div class="text-danger mt-2" id="content-error" style="display: none;">Content must be between 10 and 500 characters.</div>
+      
+          <!-- Image Upload -->
+          <div class="mb-3">
+              <label for="image-upload" class="form-label">Upload Images (Max 9)</label>
+              <button type="button" id="add-image-btn" class="btn btn-secondary btn-sm">Add Image</button>
+              <div id="image-upload-container">
+                  <!-- Existing images -->
+                  {{ image_formset.management_form }}
+                  {% for form in image_formset %}
+                    <div class="image-form mb-2">
+                      {{ form.image }}
+                      {% if form.instance.image %}
+                        <img src="{{ form.instance.image.url }}" alt="Post image" width="100">
+                      {% endif %}
+                      {{ form.DELETE }}
+                    </div>
+                  {% endfor %}
+              </div>
+              
+              <!-- File upload error message -->
+              <div class="text-danger mt-2" id="file-error" style="display: none;">You can upload up to 9 images only.</div>
+          </div>
+      
+          <!-- Buttons -->
+          <div class="d-flex justify-content-between">
+              <a class="btn btn-outline-primary" href="{% url 'posts:my_post' %}">
+                  <i class="bi bi-arrow-left"></i> 返回我的游记
+              </a>
+              <button type="submit" class="btn btn-primary">确认修改</button>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        const images = document.querySelectorAll('input[type="file"]');
+        if (images.length > 9) {
+            alert('You cannot upload more than 9 images.');
+            event.preventDefault();
+        }
+    });
+});
+
+</script>
+{% endblock %}
