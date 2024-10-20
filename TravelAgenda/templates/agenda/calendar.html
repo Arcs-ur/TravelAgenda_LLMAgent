@@ -1,5 +1,9 @@
+{% extends 'base.html' %}
+
 {% load static %}
 {% block title %}Your Calendar{% endblock %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -49,12 +53,10 @@
           </div>
         </div>
     </div>
-    <div id='calendar'></div>
-
+    <div id="event-details"></div> <!-- 确保这个元素存在 -->
     <script id="events" type="application/json">
         {{ events|safe }}
     </script>
-    <div id="event-details"></div> <!-- 确保这个元素存在 -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -65,14 +67,16 @@
                 eventClick: function(info) {
                     var details = `
                         <h3>${info.event.title}</h3>
-                        <p>Location: ${info.event.extendedProps.location}</p>
-                        <p>Description: ${info.event.extendedProps.description || 'No description available'}</p>
-                    `;//这里展示的东西还要再改一改
-        document.getElementById("event-details").innerHTML = details;//成功work了，显示在页面的下部
-        },
+                        <p>Location: ${'From '+ info.event.extendedProps.departure_location + ' To ' + info.event.extendedProps.arrive_location}</p>
+                        <p>During Time: ${'From '+ info.event.start + ' To ' + info.event.end}</p>
+                        <p>Transportation: ${info.event.extendedProps.transportation || 'No description available'}</p>
+                    `;
+                    document.getElementById("event-details").innerHTML = details;
+                },
             });
             calendar.render();
         });
     </script>
 </body>
 </html>
+{% endblock %}

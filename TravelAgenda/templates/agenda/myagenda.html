@@ -38,11 +38,10 @@
                     {% for agenda in agendas %}
                       <tr>
                         <th scope="row">{{ forloop.counter }}</th>
+                        {% for loc in agenda.agendalocation_set.all %}
                         <td>{{ agenda.title }}</td>  
                         <td>
-                          {% for loc in agenda.agendalocation_set.all %}
-                            {{ loc.departure_location.name }} to {{ loc.arrival_location.name }} ({{ loc.arrival_time }})<br>
-                          {% endfor %}
+                            {{ loc.departure_location.name }} to {{ loc.arrival_location.name }} ({{ loc.departure_time }} to {{ loc.arrival_time }})<br>
                         </td>
                         <td>
                           <form action="{% url 'agenda:delete_agenda' agenda.id %}" method="post" style="display:inline;">
@@ -54,6 +53,7 @@
                             <button type="submit" class="btn btn-warning">修改</button>
                           </form>
                         </td>
+                        {% endfor %}
                       </tr>
                     {% endfor %}
                 </tbody>
