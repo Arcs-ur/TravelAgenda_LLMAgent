@@ -54,7 +54,7 @@ def delete_agendalocation(request, id):
 def update_agenda(request, id):
     agenda = get_object_or_404(Agenda, id=id)
     if request.method == 'POST':
-        agenda_form = AgendaForm(request.POST, instance=agenda)
+        agenda_form = TravelAgendaForm(request.POST, instance=agenda)
         if agenda_form.is_valid():
             agenda_form.save()
             return redirect('agenda:agenda_list')  # 更新后重定向到日程列表页面

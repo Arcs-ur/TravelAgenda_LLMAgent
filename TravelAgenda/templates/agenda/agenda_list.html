@@ -28,10 +28,12 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th scope="col">序号</th>
                         <th scope="col"></th>
                         <th scope="col">日程名称</th>
                         <th scope="col">地点信息</th>
                         <th scope="col">操作</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">   
@@ -39,18 +41,29 @@
                     {% for loc in agenda.agendalocation_set.all %}
                     <tr>
                       <th scope="row">{{ forloop.parentloop.counter }}</th>  <!-- 外层循环计数 -->
+                      <th scope="row">{{ loc.parentloop.counter }}</th>  
                       <td>{{ agenda.title }}</td>  
                       <td>
                           {{ loc.departure_location.name }} to {{ loc.arrival_location.name }} ({{ loc.departure_time }} to {{ loc.arrival_time }})<br>
                       </td>
                       <td>
+                        <form action="{% url 'agenda:delete_agenda' agenda.id %}" method="post" style="display:inline;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger">删除旅游计划</button>
+                        </form>
+                        <form action="{% url 'agenda:update_agenda' agenda.id %}" method="post" style="display:inline;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-warning">修改旅游计划</button>
+                        </form>
+                      </td>
+                      <td>
                         <form action="{% url 'agenda:delete_agendalocation' loc.id %}" method="post" style="display:inline;">
                           {% csrf_token %}
-                          <button type="submit" class="btn btn-danger">删除</button>
+                          <button type="submit" class="btn btn-danger">删除行程</button>
                         </form>
                         <form action="{% url 'agenda:update_agendalocation' loc.id %}" method="post" style="display:inline;">
                           {% csrf_token %}
-                          <button type="submit" class="btn btn-warning">修改</button>
+                          <button type="submit" class="btn btn-warning">修改行程</button>
                         </form>
                       </td>
                     </tr>
