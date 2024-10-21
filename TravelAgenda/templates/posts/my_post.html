@@ -17,6 +17,7 @@
 {% endblock %}
 {% block content %}
 <div class="container-lg px-4">
+    <div class="row">
     <header class="header">
         <!-- <a class="header-brand">游记</a> -->
         <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -64,7 +65,7 @@
         
     </header>
 
-    <div class="row">
+   
         {% for post in posts %}
         <div class="col-md-6 mb-4">
             <div class="card h-100 d-flex flex-column position-relative">  <!-- Make cards same height and align content -->
@@ -129,9 +130,7 @@
         </div>
         {% empty %}
         <div class="card">
-            <div class="card-header">
-              Featured
-            </div>
+            
             <div class="card-body">
               
               <p class="card-text">你还没有游记哦，快来发布一个叭!</p>

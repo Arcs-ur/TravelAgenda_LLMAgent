@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView,CreateView,DetailView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin 
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
 from .models import Post, Image, Comment
 from .forms import PostForm,ImageForm,PostSendForm,CommentForm
@@ -24,12 +24,12 @@ from .forms import PostForm,ImageForm,PostSendForm,CommentForm
 class PostListView(LoginRequiredMixin,ListView):
     model = Post
     template_name = 'posts/post_list.html'  
-    context_object_name = 'posts'  
-    ordering = ['-likes']  
+    context_object_name = 'posts'   
     paginate_by = 10
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')  
+        queryset = queryset.annotate(num_likes=Count('likes')).order_by('-num_likes')
         if query:
             queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
         return queryset
