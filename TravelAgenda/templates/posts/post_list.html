@@ -47,10 +47,18 @@
                 <a href="{% url 'posts:post_detail' post.pk %}" class="btn btn-primary">Read More</a>
                 <div class="card-footer text-muted mt-auto">
                     
-                    <form method="post" action="{% url 'posts:like_post' post.pk %}">
+                    <!-- <form method="post" action="{% url 'posts:like_post' post.pk %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-primary">Like ({{ post.likes }})</button>
-                    </form>
+                        {% if user in post.likes.all %}
+                            <button type="submit" class="btn btn-primary">Unlike ({{ post.total_likes }})</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-outline-primary">Like ({{ post.total_likes }})</button>
+                        {% endif %}
+                    </form> -->
+                    <button id="like-btn" data-post-id="{{ post.pk }}" class="btn {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        {% if user in post.likes.all %}Unlike{% else %}Like{% endif %} ({{ post.total_likes }})
+                    </button>
+                    
                 </div>
             </div>
         </div>
@@ -111,3 +119,34 @@
 </style>
 {% endblock %}
 
+{% block script %}
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+<script>
+    $(document).ready(function(){
+        $('#like-btn').click(function(){
+            var postId = $(this).data('post-id');
+            var likeBtn = $(this);
+
+            $.ajax({
+                url: "/posts/post/" + postId + "/like/",  // Use the dynamic post ID in the URL
+                type: "POST",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Django's CSRF token
+                },
+                success: function(response) {
+                    // Update the button style and text
+                    if (response.liked) {
+                        likeBtn.removeClass('btn-outline-primary').addClass('btn-primary');
+                        likeBtn.text('Unlike (' + response.total_likes + ')');
+                    } else {
+                        likeBtn.removeClass('btn-primary').addClass('btn-outline-primary');
+                        likeBtn.text('Like (' + response.total_likes + ')');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+{% endblock %}

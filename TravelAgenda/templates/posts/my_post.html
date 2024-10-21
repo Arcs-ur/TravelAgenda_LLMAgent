@@ -23,9 +23,38 @@
             <a class="btn btn-outline-primary" href="{% url 'posts:send' %}">
                 <i class="bi bi-calendar"></i> 新建游记
             </a>
-            <button type="button" class="btn btn-outline-primary">
+
+            <!-- 批量删除按钮 -->
+            <button type="button" class="btn btn-outline-danger" data-coreui-toggle="modal" data-coreui-target="#batchdeleteModal">
                 <i class="bi bi-trash"></i> 批量删除
             </button>
+
+            <!-- 批量删除模态框 -->
+            <div class="modal fade" id="batchdeleteModal" tabindex="-1" aria-labelledby="batchdeleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="batchdeleteModalLabel">你确定要删除这些游记吗？</h5>
+                            <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            删除后将无法恢复，别人也无法查看该游记
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">取消</button>
+
+                            <!-- 批量删除表单 -->
+                            <form method="POST" action="{% url 'posts:batch_delete_posts' %}" id="batch-delete-form">
+                                {% csrf_token %}
+                                <!-- 用于动态添加选中的帖子ID -->
+                                <input type="hidden" name="selected_posts" id="selected-posts-input">
+                                <button type="submit" class="btn btn-primary">删除</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             
             <!-- <button type="button" class="btn btn-outline-primary"></button> -->
           </div>
@@ -39,10 +68,18 @@
     <div class="row">
         {% for post in posts %}
         <div class="col-md-6 mb-4">
-            <div class="card h-100 d-flex flex-column"> <!-- Make cards same height and align content -->
+            <div class="card h-100 d-flex flex-column position-relative">  <!-- Make cards same height and align content -->
+                <div class="form-check position-absolute" style="top: 10px; right: 10px;">
+                    <input class="form-check-input" type="checkbox" name="selected_posts" value="{{ post.pk }}" id="flexCheck{{ post.pk }}">
+                    <label class="form-check-label" for="flexCheck{{ post.pk }}">
+                        <i class="bi bi-trash"></i>
+                    </label>
+                </div>
+                <!-- <input type="checkbox" name="selected_posts" value="{{ post.pk }}" class="position-absolute" style="top: 5px; left: 10px;"> -->
                 <div class="card-body flex-grow-1"> <!-- Allow body to grow and take available space -->
+                    
                     <h5 class="card-title">{{ post.title }}</h5>
-                    <input type="checkbox" name="selected_posts" value="{{ post.pk }}">
+                    
                     <p class="card-text">{{ post.content|truncatechars:300 }}</p>
 
                     <p class="card-text"><small class="text-body-secondary">By {{ post.user.username }} on {{ post.created_at|date:"M d, Y H:i" }}</small></p>
@@ -57,51 +94,51 @@
                 </div>
                 <a href="{% url 'posts:post_detail' post.pk %}" class="btn btn-primary">Read More</a>
                 <div class="card-footer text-muted mt-auto d-flex justify-content-between align-items-center">
-                    <a href="{% url 'posts:like_post' post.pk %}" class="btn btn-outline-secondary">
-                        <i class="bi bi-pencil-square"></i> 编辑
-                    </a>
-                    <!-- Button trigger modal -->
-                <button type="button" class="btn btn-outline-danger" data-coreui-toggle="modal" data-coreui-target="#deleteModal">
-                    <i class="bi bi-trash"></i>  删除
-                </button>
+                    <div class="ms-auto d-flex">
+                        <!-- Edit Button -->
+                        <a href="{% url 'posts:post_edit' post.pk %}" class="btn btn-outline-warning me-2">
+                            <i class="bi bi-pencil-square"></i> 编辑
+                        </a>
                 
-                <!-- Modal -->
-                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"> 你确定要删除这篇游记吗？</h5>
-                        <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            删除后将无法恢复，别人也无法查看该游记
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary" id="confirmDelete">删除</button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                    <!-- <form method="post" action="{% url 'posts:like_post' post.pk %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-danger">
-                            <i class="bi bi-trash"></i> Delete
+                        <!-- Delete Button (Trigger Modal) -->
+                        <button type="button" class="btn btn-outline-danger" data-coreui-toggle="modal" data-coreui-target="#deleteModal">
+                            <i class="bi bi-trash"></i> 删除
                         </button>
-                    </form> -->
-                    <!-- <form method="post" action="{% url 'posts:like_post' post.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-primary">Like ({{ post.likes }})</button>
-                    </form> -->
+                    </div>
+                
+                    <!-- Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">你确定要删除这篇游记吗？</h5>
+                                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    删除后将无法恢复，别人也无法查看该游记
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">取消</button>
+                                    <a href="{% url 'posts:delete_post' post.id %}" class="btn btn-primary" id="confirmDelete">删除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                
             </div>
         </div>
         {% empty %}
-        <header class="header">
-            <span class="header-text">
-                你还没有发布帖子哦，快来发布一个叭
-            </span>
-        </header>
+        <div class="card">
+            <div class="card-header">
+              Featured
+            </div>
+            <div class="card-body">
+              
+              <p class="card-text">你还没有游记哦，快来发布一个叭!</p>
+              <a href="{% url 'posts:send' %}" class="btn btn-primary">发布第一个游记</a>
+            </div>
+          </div>
         {% endfor %}
     </div>
 
@@ -153,6 +190,22 @@
 </style>
 {% endblock %}
 {% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // 监听批量删除模态框的打开事件
+    document.getElementById('batchdeleteModal').addEventListener('show.coreui.modal', function () {
+        let selectedPosts = [];
+        // 遍历所有被选中的复选框
+        document.querySelectorAll('input[name="selected_posts"]:checked').forEach(function (checkbox) {
+            selectedPosts.push(checkbox.value);  // 获取被选中的帖子ID
+        });
+
+        // 将选中的帖子ID放入隐藏的 input 中，以便表单提交
+        document.getElementById('selected-posts-input').value = selectedPosts.join(',');
+    });
+});
+
+</script>
 
 {% endblock %}
 

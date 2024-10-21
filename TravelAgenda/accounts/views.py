@@ -4,23 +4,26 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 
+from .forms import CustomUserCreationForm  # 导入自定义表单
+
 def register_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-        
-        if password1 == password2:
-            user = User.objects.create_user(username=username, email=email, password=password1)
-            user.save()
-            #login(request, user)  # Log in the user after registration
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)  # 注册后自动登录
             messages.success(request, 'Registration successful!')
             return redirect('accounts:login')
         else:
-            messages.error(request, 'Passwords do not match!')
-
-    return render(request, 'accounts/register.html')  
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':

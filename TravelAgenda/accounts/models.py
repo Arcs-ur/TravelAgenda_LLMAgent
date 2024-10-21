@@ -18,6 +18,6 @@ class CustomUser(AbstractUser):
     )
     phone_number = models.CharField(max_length=15, blank=False, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-
+    level =  models. IntegerField(default=1)
     def __str__(self):
         return self.username
