@@ -17,15 +17,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import Q
 from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
-from .models import Post, Image
-from .forms import PostForm,ImageForm,PostSendForm
+from .models import Post, Image, Comment
+from .forms import PostForm,ImageForm,PostSendForm,CommentForm
 
 # 查看所有用户的帖子
 class PostListView(LoginRequiredMixin,ListView):
     model = Post
     template_name = 'posts/post_list.html'  
     context_object_name = 'posts'  
-    ordering = ['-created_at']  
+    ordering = ['-likes']  
     paginate_by = 10
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -107,19 +107,64 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
             return self.form_invalid(form)
         
 # 每个帖子的详情展示页面
-class PostDetailView(LoginRequiredMixin,DetailView):
-    model = Post
-    template_name = 'posts/post_detail.html'
-    context_object_name = 'post'
+class MyPostDetailView(LoginRequiredMixin, ListView):
+    model = Comment
+    template_name = 'posts/mypost_detail.html'
+    context_object_name = 'comments'
+    paginate_by = 10
+
+    def get_queryset(self):
+        post = get_object_or_404(Post, id=self.kwargs['pk'])
+        return Comment.objects.filter(post=post, parent=None).order_by('-created_at')[:20]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['images'] = self.object.images.all()
+        post = get_object_or_404(Post, id=self.kwargs['pk']) 
+        context['post'] = post  
+        context['images'] = post.images.all() 
+        return context
+    
+# 详情页视图
+class PostDetailView(LoginRequiredMixin, ListView):
+    model = Comment
+    template_name = 'posts/post_detail.html'
+    context_object_name = 'comments'
+    paginate_by = 10
+
+    def get_queryset(self):
+        post = get_object_or_404(Post, id=self.kwargs['pk'])
+        # 筛选出最新的 20 条评论，并按倒序排列
+        return Comment.objects.filter(post=post, parent=None).order_by('-created_at')[:20]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = get_object_or_404(Post, id=self.kwargs['pk'])  # 获取帖子对象
+        context['post'] = post  # 将帖子对象传递到模板
+        context['images'] = post.images.all()  # 获取帖子相关的图片
+        context['form'] = CommentForm()  # 评论表单
         return context
 
+# 处理评论的视图
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
 
+    def form_valid(self, form):
+        post = get_object_or_404(Post, id=self.kwargs['pk'])  # 获取相关的帖子对象
+        form.instance.post = post  # 设置评论所属帖子
+        form.instance.user = self.request.user  # 当前用户为评论作者
 
+        # 如果是回复，设置父评论
+        parent_id = self.request.POST.get('parent_id')
+        if parent_id:
+            parent_comment = get_object_or_404(Comment, id=parent_id)
+            form.instance.parent = parent_comment
 
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # 重定向回帖子详情页
+        return reverse('posts:post_detail', kwargs={'pk': self.kwargs['pk']})
 # @login_required
 # def like_post(request, pk):
 #     post = get_object_or_404(Post, pk=pk)

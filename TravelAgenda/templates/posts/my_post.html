@@ -23,11 +23,11 @@
             <a class="btn btn-outline-primary" href="{% url 'posts:send' %}">
                 <i class="bi bi-calendar"></i> 新建游记
             </a>
-
-            <!-- 批量删除按钮 -->
-            <button type="button" class="btn btn-outline-danger" data-coreui-toggle="modal" data-coreui-target="#batchdeleteModal">
+            <a class="btn btn-outline-danger" data-coreui-toggle="modal" data-coreui-target="#batchdeleteModal">
                 <i class="bi bi-trash"></i> 批量删除
-            </button>
+            </a>
+          </div>
+       
 
             <!-- 批量删除模态框 -->
             <div class="modal fade" id="batchdeleteModal" tabindex="-1" aria-labelledby="batchdeleteModalLabel" aria-hidden="true">
@@ -56,8 +56,7 @@
             </div>
 
             
-            <!-- <button type="button" class="btn btn-outline-primary"></button> -->
-          </div>
+          
         <form class="d-flex" method="get" action="{% url 'posts:my_post' %}">
             <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ request.GET.q }}">
             <button class="btn btn-outline-success" type="submit">Search</button>
@@ -92,7 +91,7 @@
                     </div>
                     {% endif %}
                 </div>
-                <a href="{% url 'posts:post_detail' post.pk %}" class="btn btn-primary">Read More</a>
+                <a href="{% url 'posts:mypost_detail' post.pk %}" class="btn btn-primary">Read More</a>
                 <div class="card-footer text-muted mt-auto d-flex justify-content-between align-items-center">
                     <div class="ms-auto d-flex">
                         <!-- Edit Button -->

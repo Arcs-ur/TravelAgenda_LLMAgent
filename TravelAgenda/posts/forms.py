@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Post, Image
+from .models import Post, Image, Comment
 
 class PostSendForm(forms.ModelForm):
     class Meta:
@@ -23,3 +23,12 @@ class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
         fields = ['image']
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']  # 只展示评论内容字段
+        widgets = {
+            'content': forms.Textarea(attrs={'placeholder': 'Write a comment...', 'rows': 3}),
+        }
