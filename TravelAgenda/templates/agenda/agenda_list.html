@@ -27,35 +27,51 @@
         <div class="card-body">
             <table class="table">
                 <thead>
+                  <form class="d-flex" method="get" action="{% url 'agenda:agenda_find' %}">
+              
+                    <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ request.GET.q }}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
                     <tr>
-                        <th scope="col">序号</th>
-                        <th scope="col"></th>
-                        <th scope="col">日程名称</th>
-                        <th scope="col">地点信息</th>
-                        <th scope="col">操作</th>
-                        <th scope="col"></th>
+                      <th scope="col">序号</th>
+                      <th scope="col"></th>
+                      <th scope="col">日程名称</th>
+                      <th scope="col">地点信息</th>
+                      <th scope="col">出行时间</th>
+                      <th scope="col">交通方式</th>
+                      <th scope="col">操作</th>
+                      <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody class="table-group-divider">   
-                  {% for agenda in agendas %}
-                    {% for loc in agenda.agendalocation_set.all %}
-                    <tr>
-                      <th scope="row">{{ forloop.parentloop.counter }}</th>  <!-- 外层循环计数 -->
-                      <th scope="row">{{ loc.parentloop.counter }}</th>  
-                      <td>{{ agenda.title }}</td>  
-                      <td>
-                          {{ loc.departure_location.name }} to {{ loc.arrival_location.name }} ({{ loc.departure_time }} to {{ loc.arrival_time }})<br>
-                      </td>
-                      <td>
-                        <form action="{% url 'agenda:delete_agenda' agenda.id %}" method="post" style="display:inline;">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-danger">删除旅游计划</button>
-                        </form>
-                        <form action="{% url 'agenda:update_agenda' agenda.id %}" method="post" style="display:inline;">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-warning">修改旅游计划</button>
-                        </form>
-                      </td>
+                <tbody class="table-group-divider">  
+                 
+                  {% if agendas %}  
+                  
+                    {% for agenda in agendas %}
+                      {% for loc in agenda.agendalocation_set.all %}
+                      <tr>
+                        <th scope="row">{{ forloop.parentloop.counter }}</th>  <!-- 外层循环计数 -->
+                        <th scope="row">{{ loc.parentloop.counter }}</th>  
+                        <td>{{ agenda.title }}</td>  
+                        <td>
+                            {{ loc.departure_location.name }} to {{ loc.arrival_location.name }} <br>
+                        </td>
+                        <td>
+                          {{ loc.departure_time }} to {{ loc.arrival_time }}
+                        </td>
+                        <td>
+                          By {{loc.commute_info}}
+                        <td>
+                          <form action="{% url 'agenda:delete_agenda' agenda.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">删除旅游计划</button>
+                          </form>
+                          <form action="{% url 'agenda:update_agenda' agenda.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning">修改旅游计划</button>
+                          </form>
+                        </td>
                       <td>
                         <form action="{% url 'agenda:delete_agendalocation' loc.id %}" method="post" style="display:inline;">
                           {% csrf_token %}
@@ -69,6 +85,11 @@
                     </tr>
                     {% endfor %}
                   {% endfor %}
+                  {% else %}
+                  <tr>
+                      <td colspan="6">没有找到符合条件的日程。</td>
+                  </tr>
+              {% endif %}
               </tbody>
             </table>
         </div>

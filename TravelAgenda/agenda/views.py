@@ -5,6 +5,10 @@ from .forms import *
 from datetime import datetime
 from datetime import timedelta
 import json
+from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
+
 # def agenda_main(request):
 #     return render(request, 'agenda/main.html')
 
@@ -124,6 +128,37 @@ def calendar_view(request):
     context = {
         'events': events_json
     }
-
-    
     return render(request, 'agenda/calendar.html', context)
+
+class AgendaListView(LoginRequiredMixin, ListView):
+    model = Agenda
+    #model = Agenda
+    template_name = 'agenda/agenda_list.html'
+    context_object_name = 'agendas'
+    ordering = ['-created_at']  # 根据创建时间排序
+    paginate_by = 10  # 每页 10 条记录
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     query = self.request.GET.get('q')
+    #     if query:
+    #         #queryset = queryset.filter(Q(title__icontains=query))
+    #         queryset = queryset.filter(Q(departure_location__name__icontains=query)|Q(arrival_location__name__icontains=query)|Q(agenda__title__icontains=query))
+    #     return queryset.values('agenda')
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+    
+        if query:
+        # 筛选出符合条件的 AgendaLocation 实例
+            # filtered_locations = queryset.filter(
+            #     Q(departure_location__name__icontains=query) |
+            #     Q(arrival_location__name__icontains=query) |
+            #     Q(agenda__title__icontains=query)|
+            #     Q(commute_info__icontains=query)
+            # )   
+            queryset = queryset.filter(Q(title__icontains=query))
+        # 获取这些实例对应的 agenda，并去重
+            #agendas = filtered_locations.values('agenda').distinct()
+
+        # 返回符合条件的 agenda
+            return queryset
