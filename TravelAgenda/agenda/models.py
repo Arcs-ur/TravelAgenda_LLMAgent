@@ -1,10 +1,12 @@
 from django.db import models
+from django.utils import timezone
 # Create your models here.
 #agenda的database里面要包括日程的名字比如“2024北京行”，要包括日程中涉及的地点、到达地点的时间、地点与地点之间的通勤。
 
 class Location(models.Model):
     name = models.CharField(max_length=200)  # 地点名称
     address = models.CharField(max_length=300, blank=True)  # 地址（可选）
+    created_at = models.DateTimeField(default=timezone.now)
 
 
     def __str__(self):
@@ -13,7 +15,7 @@ class Location(models.Model):
 class Agenda(models.Model):
     title = models.CharField(max_length=200,default='Unnamed agenda')  # 日程名称
     locations = models.ManyToManyField(Location, through='AgendaLocation',through_fields=('agenda','departure_location' ,'arrival_location'))  # 通过中间模型关联地点
-   
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title
@@ -25,7 +27,7 @@ class AgendaLocation(models.Model):
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()  # 到达目的地的时间
     commute_info = models.TextField()  # 通勤信息
-    
+    created_at = models.DateTimeField(default=timezone.now)
     class Meta:
         unique_together = ('agenda', 'departure_location', 'arrival_location')  # 确保组合唯一
 

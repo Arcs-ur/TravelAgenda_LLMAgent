@@ -7,7 +7,6 @@
     <h1>更新 {{ agenda.title }}</h1>
     <form method="POST">
         {% csrf_token %}
-        {{ agenda_form.as_p }}
         <div class="mb-3">
             <label for="title">日程名称:</label>
             <input type="text" name="title" id="title" class="form-control" value="{{ agenda_form.title.value|default_if_none:agenda.title }}" required>
