@@ -5483,7 +5483,9 @@ select.form-multi-select {
 .card-img,
 .card-img-top,
 .card-img-bottom {
-  width: 100%;
+  width: 100% ; 
+  height: 200px; /* 设置固定的高度 */
+  object-fit: cover; /* 确保图片覆盖整个区域，可能会裁剪 */
 }
 
 .card-img,
