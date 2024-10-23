@@ -1,5 +1,7 @@
 # G3
-
+# 配置说明
+在settings.py中加上
+AUTH_USER_MODEL = 'accounts.CustomUser'
 ## 文件夹内容说明
 1. accounts
 用户账户管理模块的app
