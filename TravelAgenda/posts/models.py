@@ -24,17 +24,6 @@ class Image(models.Model):
     def __str__(self):
         return f"Image for post {self.post.id} uploaded at {self.uploaded_at}"
 
-# class Comment(models.Model):
-#     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)  # 关联到Post
-#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)  # 评论的用户
-#     content = models.TextField()  # 评论的内容
-#     created_at = models.DateTimeField(auto_now_add=True)  # 评论的创建时间
-#     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)  # 父评论（用于回复）
-
-#     def __str__(self):
-#         if self.parent:
-#             return f"Reply by {self.user.username} on comment {self.parent.id}"
-#         return f"Comment by {self.user.username} on post {self.post.id}"
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)  # 关联到Post
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)  # 评论的用户

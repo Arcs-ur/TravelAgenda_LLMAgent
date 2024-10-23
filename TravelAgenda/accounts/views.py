@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-
+from .models import CustomUser
 from .forms import CustomUserCreationForm  # 导入自定义表单
 
 def register_view(request):
@@ -34,9 +34,9 @@ def login_view(request):
 
         # 检查用户是否存在
         try:
-            user = User.objects.get(username=username)
+            user = CustomUser.objects.get(username=username)
             print(f"User found: {user.username}, Active: {user.is_active}")
-        except User.DoesNotExist:
+        except CustomUser.DoesNotExist:
             print("User does not exist.")
 
         user = authenticate(request, username=username, password=password)

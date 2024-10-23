@@ -2,20 +2,20 @@ from django.shortcuts import render,redirect,get_object_or_404,get_list_or_404
 from django.http import HttpResponseRedirect,HttpResponseForbidden,JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.forms import modelformset_factory
+
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.generics import CreateAPIView,ListAPIView
-from django.forms import modelformset_factory
-
-from django.contrib.auth.decorators import login_required
 
 from django.views.generic import ListView,CreateView,DetailView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin 
+
 from django.db import transaction
 from django.db.models import Q, Count
+
 from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
 from .models import Post, Image, Comment
 from .forms import PostForm,ImageForm,PostSendForm,CommentForm
@@ -29,6 +29,7 @@ class PostListView(LoginRequiredMixin,ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')  
+        # 按照点赞的次数排序（热门度）
         queryset = queryset.annotate(num_likes=Count('likes')).order_by('-num_likes')
         if query:
             queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
@@ -63,7 +64,7 @@ class PostSendView(LoginRequiredMixin, CreateView):
         
         if serializer.is_valid():
             serializer.save(user=self.request.user) 
-            return redirect('posts:post_list')
+            return redirect('posts:my_post')
         return self.form_invalid(form, serializer.errors)
     
     def form_invalid(self, form, errors=None):
@@ -91,22 +92,30 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         context = self.get_context_data()
         image_formset = context['image_formset']
-
-        # Validate images
+        
         if image_formset.is_valid():
-            total_images = self.object.images.count() + len(image_formset.new_objects)
+            # Handle image deletion and addition logic
+            existing_images = self.object.images.count() - len([form for form in image_formset.deleted_forms if form.cleaned_data['DELETE']])
+            new_images = len(image_formset.new_objects)
+            total_images = existing_images + new_images
+            
             if total_images > 9:
                 form.add_error(None, 'You cannot upload more than 9 images for a post.')
                 return self.form_invalid(form)
-
+            
+            # Save post form and image formset
             self.object = form.save()
             image_formset.instance = self.object
             image_formset.save()
+            
+            # Redirect to success URL
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
+
+
         
-# 每个帖子的详情展示页面
+# 用户自己的帖子的详情展示页面
 class MyPostDetailView(LoginRequiredMixin, ListView):
     model = Comment
     template_name = 'posts/mypost_detail.html'
@@ -124,7 +133,7 @@ class MyPostDetailView(LoginRequiredMixin, ListView):
         context['images'] = post.images.all() 
         return context
     
-# 详情页视图
+# 每个帖子的详情页视图
 class PostDetailView(LoginRequiredMixin, ListView):
     model = Comment
     template_name = 'posts/post_detail.html'
@@ -163,25 +172,9 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        # 重定向回帖子详情页
         return reverse('posts:post_detail', kwargs={'pk': self.kwargs['pk']})
-# @login_required
-# def like_post(request, pk):
-#     post = get_object_or_404(Post, pk=pk)
-#     post.likes += 1
-#     post.save()
-#     return HttpResponseRedirect(reverse('posts:post_list'))
-# @login_required
-# @transaction.atomic
-# def like_post(request, pk):
-#     post = get_object_or_404(Post, pk=pk)
     
-#     if request.user in post.likes.all():
-#         post.likes.remove(request.user)  # User already liked the post, so unlike it
-#     else:
-#         post.likes.add(request.user)  # Like the post
-
-#     return redirect('posts:post_list') 
+# 点赞功能
 @login_required
 @transaction.atomic
 def like_post(request, pk):
@@ -199,6 +192,7 @@ def like_post(request, pk):
         'total_likes': post.likes.count(),
     })
 
+# 删除帖子
 @login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -208,6 +202,7 @@ def delete_post(request, post_id):
     post.delete()
     return redirect(reverse('posts:my_post'))
 
+# 批量删除帖子
 @login_required
 def batch_delete_posts(request):
     if request.method == 'POST':
@@ -251,14 +246,3 @@ class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-# 用户发送帖子
-# class PostCreateAPIView(CreateAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
-
-#     def create(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

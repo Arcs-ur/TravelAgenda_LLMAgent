@@ -15,11 +15,9 @@
 {% block content %}
 <div class="container-lg px-4">
   <div class="card">
-     
       <h5 class="card-header text-center">
           <i class="bi bi-pencil"></i> 修改游记
       </h5>
-      <!-- <h5 class="card-header">Featured</h5> -->
       <div class="card-body">
         <form method="POST" enctype="multipart/form-data">
           {% csrf_token %}
@@ -45,10 +43,11 @@
                   <!-- Existing images -->
                   {{ image_formset.management_form }}
                   {% for form in image_formset %}
-                    <div class="image-form mb-2">
+                    <div class="image-form mb-2" id="image-form-{{ forloop.counter }}">
                       {{ form.image }}
                       {% if form.instance.image %}
                         <img src="{{ form.instance.image.url }}" alt="Post image" width="100">
+                        <button type="button" class="btn btn-danger btn-sm remove-image-btn" data-index="{{ forloop.counter }}">Delete</button>
                       {% endif %}
                       {{ form.DELETE }}
                     </div>
@@ -71,18 +70,34 @@
   </div>
 </div>
 {% endblock %}
+
 {% block script %}
 <script>
+    // Image removal functionality
     document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(event) {
-        const images = document.querySelectorAll('input[type="file"]');
-        if (images.length > 9) {
-            alert('You cannot upload more than 9 images.');
-            event.preventDefault();
-        }
+        const removeButtons = document.querySelectorAll('.remove-image-btn');
+        
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const imageIndex = this.getAttribute('data-index');
+                const imageForm = document.getElementById(`image-form-${imageIndex}`);
+                // Hide the image form
+                imageForm.style.display = 'none';
+                // Mark the DELETE checkbox as checked
+                imageForm.querySelector('input[type="checkbox"]').checked = true;
+            });
+        });
+        
+        // Ensure total images don't exceed 9
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            const imageInputs = document.querySelectorAll('input[type="file"]');
+            const existingImages = document.querySelectorAll('img').length;
+            if (imageInputs.length + existingImages > 9) {
+                alert('You cannot upload more than 9 images.');
+                event.preventDefault();
+            }
+        });
     });
-});
-
 </script>
 {% endblock %}
