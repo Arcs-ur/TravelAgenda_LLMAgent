@@ -2,6 +2,16 @@
 # 配置说明
 在settings.py中加上
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# 环境变量设置
+安装python-decouple 库
+
+	pip install python-decouple
+在G3目录下创建 .env 文件
+
+文件内容：
+
+	EMAIL_HOST_PASSWORD = 发件人邮箱密码
 ## 文件夹内容说明
 1. accounts
 用户账户管理模块的app
