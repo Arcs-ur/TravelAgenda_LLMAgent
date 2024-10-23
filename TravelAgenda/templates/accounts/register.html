@@ -1,12 +1,5 @@
 {% load static %}
 <!DOCTYPE html>
-<!--
-* CoreUI PRO Bootstrap Admin Template
-* @version v5.2.0
-* @link https://coreui.io/product/bootstrap-dashboard-template/
-* Copyright (c) 2023 creativeLabs Łukasz Holeczek
-* License (https://coreui.io/pro/license/)
--->
 <html lang="en">
 <head>
     <base href="./">
@@ -34,11 +27,8 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{% static 'assets/favicon/ms-icon-144x144.png' %}">
     <meta name="theme-color" content="#ffffff">
-    <!-- Vendors styles-->
     <link rel="stylesheet" href="{% static 'vendors/simplebar/css/simplebar.css' %}">
-    <!-- Main styles for this application-->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{% static 'css/examples.css' %}" rel="stylesheet">
     <script src="{% static 'js/config.js' %}"></script>
     <script src="{% static 'js/color-modes.js' %}"></script>
@@ -91,6 +81,16 @@
                                     {{ form.password2 }}
                                     {{ form.password2.errors }}
                                 </div>
+                                <div class="input-group mb-4">
+                                    <span class="input-group-text">
+                                        <svg class="icon">
+                                            <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-lock-locked' %}"></use>
+                                        </svg>
+                                    </span>
+                                    {{ form.verification_code }}
+                                    {{ form.verification_code.errors }}
+                                    <button type="button" class="btn btn-outline-secondary" id="send-code-btn" onclick="sendVerificationCode()">发送验证码</button>
+                                </div>
                                 <button class="btn btn-block btn-success" type="submit">Create Account</button>
                             </form>
                         </div>
@@ -99,21 +99,66 @@
             </div>
         </div>
     </div>
-    <!-- CoreUI and necessary plugins-->
     <script src="{% static 'vendors/@coreui/coreui-pro/js/coreui.bundle.min.js' %}"></script>
     <script src="{% static 'vendors/simplebar/js/simplebar.min.js' %}"></script>
     <script src="{% static 'vendors/i18next/js/i18next.min.js' %}"></script>
     <script src="{% static 'vendors/i18next-http-backend/js/i18nextHttpBackend.js' %}"></script>
     <script src="{% static 'vendors/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.js' %}"></script>
     <script src="{% static 'js/i18next.js' %}"></script>
+    
     <script>
-        const header = document.querySelector('header.header');
+        function sendVerificationCode() {
+            const email = document.querySelector('input[name="email"]').value;
+            const sendButton = document.getElementById('send-code-btn');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        document.addEventListener('scroll', () => {
-            if (header) {
-                header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+            if (!emailRegex.test(email)) {
+                alert('请输入有效的邮箱地址。');
+                return;
             }
-        });
+
+            sendButton.disabled = true;  // 禁用按钮
+            sendButton.textContent = "发送中...";  // 更改按钮文字
+
+            fetch("{% url 'accounts:send_code' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ email: email })  // 确保这里是JSON字符串
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('验证码已发送，请检查您的邮箱。');
+                    startCountdown(60);  // 调用倒计时函数，禁用按钮60秒
+                } else {
+                    response.json().then(data => alert(data.error || '发送失败，请重试。'));
+                    sendButton.disabled = false;  // 恢复按钮可点击状态
+                    sendButton.textContent = "发送验证码";  // 恢复按钮文字
+                }
+            });
+        }
+
+        function startCountdown(seconds) {
+            const sendButton = document.getElementById('send-code-btn');
+            let remainingTime = seconds;
+
+            // 更新按钮为倒计时状态
+            sendButton.textContent = `重新发送 (${remainingTime}s)`;
+
+            // 每秒更新一次倒计时
+            const countdownInterval = setInterval(() => {
+                remainingTime -= 1;
+                if (remainingTime > 0) {
+                    sendButton.textContent = `重新发送 (${remainingTime}s)`;
+                } else {
+                    clearInterval(countdownInterval);  // 清除定时器
+                    sendButton.disabled = false;  // 恢复按钮可点击状态
+                    sendButton.textContent = "发送验证码";  // 恢复按钮文字
+                }
+            }, 1000);  // 1000毫秒 = 1秒
+        }
     </script>
 </body>
 </html>

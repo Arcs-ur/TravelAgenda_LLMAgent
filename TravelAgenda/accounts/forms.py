@@ -1,12 +1,14 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser  # 确保从你的模型中导入 CustomUser
 from django.core.exceptions import ValidationError
-from .models import CustomUser  # 引入自定义用户模型
 
 class CustomUserCreationForm(UserCreationForm):
+    verification_code = forms.CharField(max_length=6, required=True, label="验证码", widget=forms.TextInput(attrs={'placeholder': '请输入验证码'}))
+
     class Meta:
-        model = CustomUser  # 使用自定义用户模型
-        fields = ['username', 'email', 'password1', 'password2']
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2', 'verification_code']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -15,33 +17,41 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['email'].widget.attrs.update({'placeholder': 'Email'})
         self.fields['password1'].widget.attrs.update({'placeholder': 'Password'})
         self.fields['password2'].widget.attrs.update({'placeholder': 'Repeat password'})
+        self.fields['verification_code'].widget.attrs.update({'placeholder': '请输入验证码'})
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if CustomUser.objects.filter(username=username).exists():
+            raise ValidationError("此用户名已被注册。")
+        return username
+    
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         
-        # 检查两次输入的密码是否一致
         if password1 and password2 and password1 != password2:
-            raise ValidationError("The two password fields didn't match.")
-        
-        # 检查密码是否与用户名相同
-        if password1 == self.cleaned_data.get('username'):
-            raise ValidationError("Password cannot be the same as the username.")
-        
-        # 检查密码长度
-        if len(password1) < 8:
-            raise ValidationError("This password is too short. It must contain at least 8 characters.")
-        
-        # 检查密码是否包含数字
-        if not any(char.isdigit() for char in password1):
-            raise ValidationError("The password must contain at least one digit.")
-        
-        # 检查密码是否包含大写字母
-        if not any(char.isupper() for char in password1):
-            raise ValidationError("The password must contain at least one uppercase letter.")
-        
-        # 检查密码是否包含小写字母
-        if not any(char.islower() for char in password1):
-            raise ValidationError("The password must contain at least one lowercase letter.")
+            raise ValidationError("两次输入的密码不一致。")
         
         return password2
+        
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password1")
+        username = cleaned_data.get("username")
+        
+        if password and username and password == username:
+            raise ValidationError("密码不能与用户名相同。")
+
+        if password and len(password) < 8:
+            raise ValidationError("密码长度过短，至少需要8个字符。")
+
+        if password and not any(char.isdigit() for char in password):
+            raise ValidationError("密码必须至少包含一个数字。")
+        
+        if password and not any(char.isupper() for char in password):
+            raise ValidationError("密码必须至少包含一个大写字母。")
+        
+        if password and not any(char.islower() for char in password):
+            raise ValidationError("密码必须至少包含一个小写字母。")
+
+        return cleaned_data
