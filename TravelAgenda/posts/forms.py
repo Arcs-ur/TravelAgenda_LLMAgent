@@ -32,3 +32,16 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'placeholder': 'Write a comment...', 'rows': 3}),
         }
+
+# class PostUpdateForm(forms.ModelForm):
+#     class Meta:
+#         model = Post
+#         fields = ['title', 'content'] 
+
+# class ImageUpdateForm(forms.ModelForm):
+#     class Meta:
+#         model = Image
+#         fields = ['image'] 
+#         widgets = {
+#             'image': forms.ClearableFileInput(attrs={'multiple': True}),
+#         }

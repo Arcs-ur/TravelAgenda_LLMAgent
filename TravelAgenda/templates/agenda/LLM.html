@@ -1,82 +1,69 @@
 {% extends 'base.html' %}
 
-{% block title %}Agenda{% endblock %}
-
-
-{% block trace %}
-<div class="container-fluid px-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb my-0">
-            <li class="breadcrumb-item"><span>Home</span></li>
-            <li class="breadcrumb-item"><span>Agenda</span></li>
-            <li class="breadcrumb-item active"><span>Api</span></li>
-        </ol>
-    </nav>
-</div>
-{% endblock %}
 {% block content %}
-<div class="body flex-grow-1">
-    <div class="container-lg px-4">
-
-            <!-- 第一个表单 -->
-            <div id="step1" class="form-step">
-                <h3>Step 1: Basic Information</h3>
-                <form>
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Enter your name">
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next</button>
-                </form>
-            </div>
-        
-            <!-- 第二个表单 -->
-            <div id="step2" class="form-step" style="display:none;">
-                <h3>Step 2: Contact Information</h3>
-                <form>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter your email">
-                    </div>
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Back</button>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next</button>
-                </form>
-            </div>
-        
-            <!-- 第三个表单 -->
-            <div id="step3" class="form-step" style="display:none;">
-                <h3>Step 3: Confirmation</h3>
-                <form>
-                    <div class="mb-3">
-                        <label for="confirm" class="form-label">Are you sure?</label>
-                        <select class="form-control" id="confirm">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </div>
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
-                </form>
-            </div>
-
+<div class="container">
+    <h1 class="mt-4">根据目的地生成旅游日程规划</h1>
+    <form id="itineraryForm">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="destination" class="form-label">目的地</label>
+            <input type="text" class="form-control" id="destination" name="destination" placeholder="输入目的地" required>
+        </div>
+        <div class="mb-3">
+            <label for="days" class="form-label">天数</label>
+            <input type="number" class="form-control" id="days" name="days" placeholder="输入旅行天数" required>
+        </div>
+        <button type="submit" class="btn btn-primary">生成日程</button>
+    </form>
+    
+    <div id="itineraryResult" class="mt-5" style="display: none;">
+        <h2>您的旅游日程</h2>
+        <ul id="itineraryList" class="list-group"></ul>
     </div>
 </div>
 
-{% endblock %}
-{% block script%}
 <script>
-    function nextStep(step) {
-        document.querySelectorAll('.form-step').forEach(function(stepDiv) {
-            stepDiv.style.display = 'none';
-        });
-        document.getElementById('step' + step).style.display = 'block';
-    }
+    document.getElementById('itineraryForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // 防止表单默认提交
 
-    function prevStep(step) {
-        document.querySelectorAll('.form-step').forEach(function(stepDiv) {
-            stepDiv.style.display = 'none';
-        });
-        document.getElementById('step' + step).style.display = 'block';
-    }
+        const destination = document.getElementById('destination').value;
+        const days = document.getElementById('days').value;
+
+        // API 请求数据
+        const requestBody = {
+            "model": "spark-max",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": `请为我生成一个为期 ${days} 天的 ${destination} 旅游日程。`
+                }
+            ]
+        };
+
+        try {
+            const response = await fetch('https://spark-api-open.xf-yun.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer PzfmyIDmgfUOEZGdLmNB:ZfmpxbVMijaJThZaVWeQ',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                throw new Error('网络响应不正常');
+            }
+
+            const data = await response.json();
+            const itinerary = data.choices[0].message.content;
+
+            // 显示结果
+            document.getElementById('itineraryList').innerHTML = itinerary.split('\n').map(item => `<li class="list-group-item">${item}</li>`).join('');
+            document.getElementById('itineraryResult').style.display = 'block';
+        } catch (error) {
+            console.error('发生错误:', error);
+            alert(`生成日程时出错：${error.message}`);
+        }
+    });
 </script>
 {% endblock %}
