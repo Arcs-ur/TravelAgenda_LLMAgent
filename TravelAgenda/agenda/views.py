@@ -139,8 +139,9 @@ def call_api(request):
         # 从请求中获取目的地和天数
         data = json.loads(request.body)  # 解析JSON请求体
         destination = data.get('destination')  # 从解析后的数据中获取目的地
-        days = data.get('days')  # 从解析后的数据中获取天数
-
+        departure_date = data.get('departure_date')  # 从解析后的数据中获取出发时间
+        return_date = data.get('return_date')  # 从解析后的数据中获取返回时间
+        
         url = 'https://spark-api-open.xf-yun.com/v1/chat/completions'  # API的URL
         
         # 创建payload，包含目的地和天数
@@ -149,7 +150,7 @@ def call_api(request):
             'messages': [
                 {
                     'role': 'user',
-                    'content': f'为我提供关于{destination}的{days}天旅游建议'
+                    'content': f'为我提供从{departure_date}出发到{destination}，在{return_date}返回的旅行日程'
                 }
             ],
              'stream': False  # 设置为非流式响应

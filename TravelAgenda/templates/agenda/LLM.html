@@ -23,8 +23,12 @@
             <input type="text" class="form-control" id="destination" name="destination" placeholder="输入目的地" required>
         </div>
         <div class="mb-3">
-            <label for="days" class="form-label">天数</label>
-            <input type="number" class="form-control" id="days" name="days" placeholder="输入旅行天数" required>
+            <label for="departure_date" class="form-label">出发时间</label>
+            <input type="date" class="form-control" id="departure_date" name="departure_date" required>
+        </div>
+        <div class="mb-3">
+            <label for="return_date" class="form-label">返回时间</label>
+            <input type="date" class="form-control" id="return_date" name="return_date" required>
         </div>
         <button type="submit" class="btn btn-primary">生成日程</button>
     </form>
@@ -35,16 +39,23 @@
     </div>
 </div>
 
+    
+    <button id="saveItinerary" class="btn btn-success mt-3">保存到我的日程</button>
+</div>
+
 <script>
+    let itinerary = ''; // 用于存储生成的日程
+
     document.getElementById('itineraryForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // 防止表单默认提交
 
         const destination = document.getElementById('destination').value;
-        const days = document.getElementById('days').value;
+        const departureDate = document.getElementById('departure_date').value;
+        const returnDate = document.getElementById('return_date').value;
 
         // 发送请求到后端API
         try {
-            const response = await fetch('call_api/', {  // 后端的API路径
+            const response = await fetch('call_api/', {  // 确保这个URL是你Django后端的API路径
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +63,8 @@
                 },
                 body: JSON.stringify({
                     destination: destination,
-                    days: days
+                    departure_date: departureDate,
+                    return_date: returnDate
                 })
             });
 
@@ -61,7 +73,7 @@
             }
 
             const data = await response.json(); // 将响应解析为JSON
-            const itinerary = data.result; // 从JSON中提取结果
+            itinerary = data.result; // 从JSON中提取结果
 
             // 显示结果
             document.getElementById('itineraryList').innerHTML = itinerary.split('\n').map(item => `<li class="list-group-item">${item}</li>`).join('');
@@ -70,7 +82,42 @@
             console.error('发生错误:', error);
             alert(`生成日程时出错：${error.message}`);
         }
+    });
         
-});
+         // 保存按钮的点击事件
+    document.getElementById('saveItinerary').onclick = function() {
+        const destination = document.getElementById('destination').value; // 重新获取目的地
+
+        // 检查是否已生成日程
+        if (!generatedItinerary) {
+            alert('没有日志可保存。'); // 修改提示信息
+            return;
+        }
+
+        // 创建一个表单用于提交保存请求
+        const formData = new FormData();
+        formData.append('destination', destination);
+        formData.append('itinerary', generatedItinerary);
+        formData.append('name', `${destination} Trip`); // 设置命名格式
+
+        // 使用fetch发送POST请求到agenda_list URL
+        fetch('agenda_list/', {  // 确保这个URL是你Django后端的保存路径
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('保存日程失败');
+            }
+            alert('日程已成功保存到“我的日程”。');
+        })
+        .catch(error => {
+            console.error('发生错误:', error);
+            alert(`保存日程时出错：${error.message}`);
+        });
+    };
 </script>
 {% endblock %}
