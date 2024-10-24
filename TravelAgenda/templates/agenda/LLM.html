@@ -37,14 +37,11 @@
         <h2>您的旅游日程</h2>
         <ul id="itineraryList" class="list-group"></ul>
     </div>
+    <button id="saveItinerary" class="btn btn-secondary mt-3">保存日程</button>
 </div>
 
-    
-    <button id="saveItinerary" class="btn btn-success mt-3">保存到我的日程</button>
-</div>
 
 <script>
-    let itinerary = ''; // 用于存储生成的日程
 
     document.getElementById('itineraryForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // 防止表单默认提交
@@ -84,40 +81,53 @@
         }
     });
         
-         // 保存按钮的点击事件
-    document.getElementById('saveItinerary').onclick = function() {
-        const destination = document.getElementById('destination').value; // 重新获取目的地
-
-        // 检查是否已生成日程
-        if (!generatedItinerary) {
-            alert('没有日志可保存。'); // 修改提示信息
+    document.getElementById('saveItinerary').addEventListener('click', async function() {
+        const destination = document.getElementById('destination').value;
+        const itineraryItems = Array.from(document.querySelectorAll('#itineraryList .list-group-item')).map(item => item.textContent).join('\n');
+        
+        if (itineraryItems === '') {
+            alert('请先生成日程！');
             return;
         }
 
-        // 创建一个表单用于提交保存请求
-        const formData = new FormData();
-        formData.append('destination', destination);
-        formData.append('itinerary', generatedItinerary);
-        formData.append('name', `${destination} Trip`); // 设置命名格式
+        // 保存日程到 agendas/add
+        try {
+            const response = await fetch('agendas/add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
+                },
+                body: JSON.stringify({
+                    itinerary: itineraryItems
+                })
+            });
 
-        // 使用fetch发送POST请求到agenda_list URL
-        fetch('agenda_list/', {  // 确保这个URL是你Django后端的保存路径
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
-            }
-        })
-        .then(response => {
             if (!response.ok) {
                 throw new Error('保存日程失败');
             }
-            alert('日程已成功保存到“我的日程”。');
-        })
-        .catch(error => {
+
+            // 保存日程名称到 agendas/addtrip
+            const tripNameResponse = await fetch('agendas/addtrip/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
+                },
+                body: JSON.stringify({
+                    trip_name: `${destination} Trip`
+                })
+            });
+
+            if (!tripNameResponse.ok) {
+                throw new Error('保存日程名称失败');
+            }
+
+            alert('日程保存成功！');
+        } catch (error) {
             console.error('发生错误:', error);
             alert(`保存日程时出错：${error.message}`);
-        });
-    };
+        }
+    });
 </script>
 {% endblock %}
