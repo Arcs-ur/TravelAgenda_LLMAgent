@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from .views import call_api
 app_name = 'agenda'
 urlpatterns = [
     path('', views.agenda_main, name='main'),
@@ -19,4 +20,5 @@ urlpatterns = [
     path('agendas/add/', views.add_agenda, name='add_agenda'),
     path('agendas/addtrip/', views.add_Travelagenda, name='add_Travelagenda'),
     path('update/<int:id>/', views.update_agenda, name='update_agenda'),
+    path('call_api/', call_api, name='call_api'),
 ]

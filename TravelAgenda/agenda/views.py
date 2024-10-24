@@ -5,9 +5,12 @@ from .forms import *
 from datetime import datetime
 from datetime import timedelta
 import json
+import requests
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
 
 # def agenda_main(request):
 #     return render(request, 'agenda/main.html')
@@ -129,6 +132,59 @@ def calendar_view(request):
         'events': events_json
     }
     return render(request, 'agenda/calendar.html', context)
+
+@csrf_protect
+def call_api(request):
+    if request.method == 'POST':
+        # 从请求中获取目的地和天数
+        data = json.loads(request.body)  # 解析JSON请求体
+        destination = data.get('destination')  # 从解析后的数据中获取目的地
+        days = data.get('days')  # 从解析后的数据中获取天数
+
+        url = 'https://spark-api-open.xf-yun.com/v1/chat/completions'  # API的URL
+        
+        # 创建payload，包含目的地和天数
+        payload = {
+            'model': 'generalv3.5',  # 指定请求的模型
+            'messages': [
+                {
+                    'role': 'user',
+                    'content': f'为我提供关于{destination}的{days}天旅游建议'
+                }
+            ],
+             'stream': False  # 设置为非流式响应
+        }
+
+        bearer_token = 'PzfmyIDmgfUOEZGdLmNB:ZfmpxbVMijaJThZaVWeQ'  # 替换为实际的令牌
+
+        # 设置请求头
+        headers = {
+            'Authorization': f'Bearer {bearer_token}',
+            'Content-Type': 'application/json',  # 确保请求内容为JSON格式
+        }
+
+        try:
+            # 发送POST请求，传入数据和头信息
+            response = requests.post(url, json=payload, headers=headers)
+
+            # 检查响应状态码
+            response.raise_for_status() 
+
+            # 解析响应内容，假设返回结果为JSON格式
+            response_data = response.json()
+            result_text = response_data.get('choices', [{}])[0].get('message', {}).get('content', '')
+
+            # 返回合并后的结果
+            return JsonResponse({'result': result_text})  
+
+        except requests.exceptions.HTTPError as err:
+            # 处理HTTP错误
+            return JsonResponse({'error': str(err)}, status=response.status_code)
+        except Exception as e:
+            # 处理其他可能的异常
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 class AgendaListView(LoginRequiredMixin, ListView):
     model = Agenda

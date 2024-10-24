@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 
+{% block title %}Dashboard{% endblock %}
+
+{% block trace %}
+<div class="container-fluid px-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+            <li class="breadcrumb-item"><span>Home</span></li>
+            <li class="breadcrumb-item active"><span>LLM</span></li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <h1 class="mt-4">根据目的地生成旅游日程规划</h1>
@@ -29,33 +42,26 @@
         const destination = document.getElementById('destination').value;
         const days = document.getElementById('days').value;
 
-        // API 请求数据
-        const requestBody = {
-            "model": "spark-max",
-            "messages": [
-                {
-                    "role": "user",
-                    "content": `请为我生成一个为期 ${days} 天的 ${destination} 旅游日程。`
-                }
-            ]
-        };
-
+        // 发送请求到后端API
         try {
-            const response = await fetch('https://spark-api-open.xf-yun.com/v1/chat/completions', {
+            const response = await fetch('call_api/', {  // 后端的API路径
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer PzfmyIDmgfUOEZGdLmNB:ZfmpxbVMijaJThZaVWeQ',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
                 },
-                body: JSON.stringify(requestBody)
+                body: JSON.stringify({
+                    destination: destination,
+                    days: days
+                })
             });
 
             if (!response.ok) {
                 throw new Error('网络响应不正常');
             }
 
-            const data = await response.json();
-            const itinerary = data.choices[0].message.content;
+            const data = await response.json(); // 将响应解析为JSON
+            const itinerary = data.result; // 从JSON中提取结果
 
             // 显示结果
             document.getElementById('itineraryList').innerHTML = itinerary.split('\n').map(item => `<li class="list-group-item">${item}</li>`).join('');
@@ -64,6 +70,7 @@
             console.error('发生错误:', error);
             alert(`生成日程时出错：${error.message}`);
         }
-    });
+        
+});
 </script>
 {% endblock %}
