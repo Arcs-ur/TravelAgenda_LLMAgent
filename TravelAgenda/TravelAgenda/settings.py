@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'destinations',
     'dashboard',
     'posts',
-    'rest_framework',
-    'csp'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -56,7 +55,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = 'TravelAgenda.urls'
