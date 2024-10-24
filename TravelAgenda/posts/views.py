@@ -20,6 +20,9 @@ from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
 from .models import Post, Image, Comment
 from .forms import PostForm,ImageForm,PostSendForm,CommentForm
 
+from django.forms import modelformset_factory
+from django.forms.models import inlineformset_factory
+from django import forms
 # 查看所有用户的帖子
 class PostListView(LoginRequiredMixin,ListView):
     model = Post
@@ -73,48 +76,53 @@ class PostSendView(LoginRequiredMixin, CreateView):
             form.errors.update(errors)
         return self.render_to_response(context)
     
-# 用户修改帖子
+# 用户修改帖
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'posts/edit.html'
-    success_url = reverse_lazy('posts:my_post')
+    context_object_name = 'post'
+    success_url = reverse_lazy('posts:my_post')  # 默认保存成功后重定向的页面，可根据需求更改
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        ImageFormSet = modelformset_factory(Image, form=ImageForm, extra=1, can_delete=True)
+        # 获取上下文数据，将帖子表单和图片表单一起传递给模板
+        data = super().get_context_data(**kwargs)
+        ImageFormSet = inlineformset_factory(Post, Image, form=ImageForm, fields=['image'], extra=1, can_delete=True)
+        
         if self.request.POST:
-            context['image_formset'] = ImageFormSet(self.request.POST, self.request.FILES, queryset=self.object.images.all())
+            data['image_formset'] = ImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
         else:
-            context['image_formset'] = ImageFormSet(queryset=self.object.images.all())
-        return context
+            data['image_formset'] = ImageFormSet(instance=self.object)
+        
+        return data
 
     def form_valid(self, form):
         context = self.get_context_data()
         image_formset = context['image_formset']
-        
-        if image_formset.is_valid():
-            # Handle image deletion and addition logic
-            existing_images = self.object.images.count() - len([form for form in image_formset.deleted_forms if form.cleaned_data['DELETE']])
-            new_images = len(image_formset.new_objects)
-            total_images = existing_images + new_images
-            
-            if total_images > 9:
-                form.add_error(None, 'You cannot upload more than 9 images for a post.')
-                return self.form_invalid(form)
-            
-            # Save post form and image formset
+
+        if form.is_valid() and image_formset.is_valid():
+            # 保存帖子
             self.object = form.save()
+
+            # 确保 formset 关联到正确的 Post 实例，并处理图片的增删改
             image_formset.instance = self.object
             image_formset.save()
-            
-            # Redirect to success URL
+
+            # 调试输出，查看 formset 是否正确处理了删除选项
+            for form in image_formset:
+                print(f"Image form: {form.cleaned_data}, to delete: {form.cleaned_data.get('DELETE', False)}")
+
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
 
 
-        
+    def get_queryset(self):
+        # 确保用户只能编辑自己的帖子
+        return Post.objects.filter(user=self.request.user)
+    
+    def get_success_url(self) -> str:
+        return super().get_success_url()
 # 用户自己的帖子的详情展示页面
 class MyPostDetailView(LoginRequiredMixin, ListView):
     model = Comment

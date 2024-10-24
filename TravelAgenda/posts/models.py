@@ -4,8 +4,8 @@ from django.contrib.auth import get_user_model
 
 class Post(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)  # 发布者
-    title = models.TextField() # 帖子的标题
-    content = models.TextField()  # 帖子的内容
+    title = models.TextField(max_length=50) # 帖子的标题
+    content = models.TextField(max_length=200)  # 帖子的内容
     created_at = models.DateTimeField(auto_now_add=True)  # 帖子的发布时间
     likes = models.ManyToManyField(get_user_model(), related_name='liked_posts', blank=True)  # Users who liked the post
 

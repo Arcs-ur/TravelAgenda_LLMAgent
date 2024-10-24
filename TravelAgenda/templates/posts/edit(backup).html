@@ -58,7 +58,7 @@
         <div class="text-danger mt-2" id="file-error" style="display: none;">You can upload up to 9 images only.</div>
         
         <!-- 添加图片按钮 -->
-        <!-- <button type="button" class="btn btn-secondary mt-3" id="add-image">添加图片</button> -->
+        <button type="button" class="btn btn-secondary mt-3" id="add-image">添加图片</button>
         
         <!-- Buttons -->
         <div class="d-flex justify-content-between mt-4">
@@ -73,12 +73,8 @@
 </div>
 
 <style>
-  /* 隐藏删除复选框及其标签 */
+  /* 隐藏删除复选框 */
   input[type="checkbox"][name$="-DELETE"] {
-      display: none;
-  }
-  input[type="checkbox"][name$="-DELETE"] + label,
-  label[for*="-DELETE"] {
       display: none;
   }
 </style>

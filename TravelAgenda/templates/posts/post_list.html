@@ -64,11 +64,15 @@
             </div>
         </div>
         {% empty %}
-        <header class="header">
-            <span class="header-text">
-                还没有人发布帖子哦
-            </span>
-        </header>
+        <div class="card">
+            
+            <div class="card-body">
+              
+              <p class="card-text">还没有人发布帖子哦</p>
+              <a href="{% url 'posts:send' %}" class="btn btn-primary">快来发布一个吧</a>
+            </div>
+          </div>
+      
         {% endfor %}
     </div>
 

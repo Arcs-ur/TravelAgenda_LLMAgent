@@ -15,8 +15,8 @@ class PostForm(forms.ModelForm):
     def clean_content(self):
         content = self.cleaned_data.get('content')
         word_count = len(content.split())
-        if word_count < 10 or word_count > 200:
-            raise ValidationError('Content must be between 10 and 200 words.')
+        # if word_count < 10 or word_count > 2000:
+        #     raise ValidationError('Content must be between 10 and 2000 words.')
         return content
 
 class ImageForm(forms.ModelForm):
@@ -32,6 +32,8 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'placeholder': 'Write a comment...', 'rows': 3}),
         }
+from django.forms.models import inlineformset_factory
+ImageFormSet = inlineformset_factory(Post, Image, form=forms.ModelForm, fields=['image'], extra=3, can_delete=True)
 
 # class PostUpdateForm(forms.ModelForm):
 #     class Meta:
