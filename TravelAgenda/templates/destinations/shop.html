@@ -23,9 +23,12 @@
                     <select class="form-select" name="district">
                         <option value="">选择地区</option>
                         <option value="黄浦区" {% if request.GET.district == '黄浦区' %}selected{% endif %}>黄浦区</option>
+                        <option value="闵行区" {% if request.GET.district == '闵行区' %}selected{% endif %}>闵行区</option>
+                        <option value="长宁区" {% if request.GET.district == '长宁区' %}selected{% endif %}>长宁区</option>
                         <option value="徐汇区" {% if request.GET.district == '徐汇区' %}selected{% endif %}>徐汇区</option>
                         <option value="杨浦区" {% if request.GET.district == '杨浦区' %}selected{% endif %}>杨浦区</option>
                         <option value="普陀区" {% if request.GET.district == '普陀区' %}selected{% endif %}>普陀区</option>
+                        <option value="虹口区" {% if request.GET.district == '虹口区' %}selected{% endif %}>虹口区</option>
                         <option value="浦东新区" {% if request.GET.district == '浦东新区' %}selected{% endif %}>浦东新区</option>
                     </select>
                     <select class="form-select" name="stars">
@@ -52,7 +55,7 @@
                 <div class="card m-2" style="width: 18rem;">
                     <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.name }}"> <!-- 动态加载图片 -->
                     <div class="card-body">
-                        <h5 class="card-title">{{ destination.name }}</h5>
+                        <h5 class="card-title"><strong>{{ destination.name }}</strong></h5>
                         <p class="card-text">{{ destination.introduction|truncatewords:20 }}</p> <!-- 简介缩短为20个单词 -->
                         <button type="button" class="btn btn-primary" data-coreui-toggle="modal" data-coreui-target="#modal-{{ destination.id }}">
                             更多信息
