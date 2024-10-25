@@ -99,7 +99,7 @@
                     'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
                 },
                 body: JSON.stringify({
-                    itinerary: itineraryItems
+                    AgendaForm: itineraryItems
                 })
             });
 
@@ -115,7 +115,7 @@
                     'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
                 },
                 body: JSON.stringify({
-                    trip_name: `${destination} Trip`
+                    TravelAgendaForm: `${destination} Trip`
                 })
             });
 
