@@ -18,9 +18,10 @@
 <div class="body flex-grow-1">
     <div class="container-lg px-4">
         <!-- 按钮和搜索框放在同一行 -->
+        <p>旅行计划比如“Beijing Trip”,行程是里面的具体去哪玩之类的</p>
         <div class="mb-3 d-flex align-items-center">
-            <a href="{% url 'agenda:add_agenda' %}" class="btn btn-primary me-2">添加行程</a>
             <a href="{% url 'agenda:add_Travelagenda' %}" class="btn btn-primary me-2">添加旅行计划</a>
+            <a href="{% url 'agenda:add_agenda' %}" class="btn btn-primary me-2">添加行程</a>
             <form class="d-flex" method="get" action="{% url 'agenda:agenda_find' %}">
                 <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ request.GET.q }}">
                 <button class="btn btn-outline-success" type="submit">Search</button>

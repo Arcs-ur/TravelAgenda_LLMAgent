@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'destinations',
     'dashboard',
     'posts',
-    'rest_framework',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
