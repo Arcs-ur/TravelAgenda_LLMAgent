@@ -19,6 +19,7 @@
     <div class="container-lg px-4">
         <div class="d-flex justify-content-between mb-3">
             <form method="get" action="{% url 'destinations:hotel' %}">
+                {% csrf_token %}
                 <div class="input-group">
                     <select class="form-select" name="district">
                         <option value="">选择地区</option>

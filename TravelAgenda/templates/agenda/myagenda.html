@@ -23,6 +23,7 @@
             <a href="{% url 'agenda:add_Travelagenda' %}" class="btn btn-primary me-2">添加旅行计划</a>
             <a href="{% url 'agenda:add_agenda' %}" class="btn btn-primary me-2">添加行程</a>
             <form class="d-flex" method="get" action="{% url 'agenda:agenda_find' %}">
+                {% csrf_token %}
                 <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ request.GET.q }}">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>

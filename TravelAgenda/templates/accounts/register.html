@@ -40,11 +40,17 @@
                 <div class="col-md-6">
                     <div class="card mb-4 mx-4">
                         <div class="card-body p-4">
-                            <h1>Register</h1>
-                            <p class="text-body-secondary">Create your account</p>
+                            <h1>注册</h1>
+                            <p class="text-body-secondary">创建您的账户</p>
                             <form method="POST" action="{% url 'accounts:register' %}">
                                 {% csrf_token %}
-                                {{ form.non_field_errors }}
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {% for error in form.non_field_errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
                                         <svg class="icon">
@@ -52,8 +58,14 @@
                                         </svg>
                                     </span>
                                     {{ form.username }}
-                                    {{ form.username.errors }}
                                 </div>
+                                {% if form.username.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.username.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
                                         <svg class="icon">
@@ -61,8 +73,14 @@
                                         </svg>
                                     </span>
                                     {{ form.email }}
-                                    {{ form.email.errors }}
                                 </div>
+                                {% if form.email.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.email.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
                                         <svg class="icon">
@@ -70,8 +88,14 @@
                                         </svg>
                                     </span>
                                     {{ form.password1 }}
-                                    {{ form.password1.errors }}
                                 </div>
+                                {% if form.password1.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.password1.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                                 <div class="input-group mb-4">
                                     <span class="input-group-text">
                                         <svg class="icon">
@@ -79,8 +103,14 @@
                                         </svg>
                                     </span>
                                     {{ form.password2 }}
-                                    {{ form.password2.errors }}
                                 </div>
+                                {% if form.password2.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.password2.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                                 <div class="input-group mb-4">
                                     <span class="input-group-text">
                                         <svg class="icon">
@@ -88,10 +118,16 @@
                                         </svg>
                                     </span>
                                     {{ form.verification_code }}
-                                    {{ form.verification_code.errors }}
                                     <button type="button" class="btn btn-outline-secondary" id="send-code-btn" onclick="sendVerificationCode()">发送验证码</button>
                                 </div>
-                                <button class="btn btn-block btn-success" type="submit">Create Account</button>
+                                {% if form.verification_code.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.verification_code.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <button class="btn btn-block btn-success" type="submit">创建账户</button>
                             </form>
                         </div>
                     </div>
@@ -99,6 +135,7 @@
             </div>
         </div>
     </div>
+
     <script src="{% static 'vendors/@coreui/coreui-pro/js/coreui.bundle.min.js' %}"></script>
     <script src="{% static 'vendors/simplebar/js/simplebar.min.js' %}"></script>
     <script src="{% static 'vendors/i18next/js/i18next.min.js' %}"></script>
@@ -117,8 +154,8 @@
                 return;
             }
 
-            sendButton.disabled = true;  // 禁用按钮
-            sendButton.textContent = "发送中...";  // 更改按钮文字
+            sendButton.disabled = true;
+            sendButton.textContent = "发送中...";
 
             fetch("{% url 'accounts:send_code' %}", {
                 method: 'POST',
@@ -126,17 +163,23 @@
                     'Content-Type': 'application/json',
                     'X-CSRFToken': '{{ csrf_token }}'
                 },
-                body: JSON.stringify({ email: email })  // 确保这里是JSON字符串
+                body: JSON.stringify({ email: email })
             })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
                     alert('验证码已发送，请检查您的邮箱。');
-                    startCountdown(60);  // 调用倒计时函数，禁用按钮60秒
+                    startCountdown(60);
                 } else {
-                    response.json().then(data => alert(data.error || '发送失败，请重试。'));
-                    sendButton.disabled = false;  // 恢复按钮可点击状态
-                    sendButton.textContent = "发送验证码";  // 恢复按钮文字
+                    alert('发送失败，请重试。');
+                    sendButton.disabled = false;
+                    sendButton.textContent = "发送验证码";
                 }
+            })
+            .catch(error => {
+                alert('网络错误，请稍后重试。');
+                sendButton.disabled = false;
+                sendButton.textContent = "发送验证码";
             });
         }
 
@@ -144,20 +187,18 @@
             const sendButton = document.getElementById('send-code-btn');
             let remainingTime = seconds;
 
-            // 更新按钮为倒计时状态
             sendButton.textContent = `重新发送 (${remainingTime}s)`;
 
-            // 每秒更新一次倒计时
             const countdownInterval = setInterval(() => {
                 remainingTime -= 1;
                 if (remainingTime > 0) {
                     sendButton.textContent = `重新发送 (${remainingTime}s)`;
                 } else {
-                    clearInterval(countdownInterval);  // 清除定时器
-                    sendButton.disabled = false;  // 恢复按钮可点击状态
-                    sendButton.textContent = "发送验证码";  // 恢复按钮文字
+                    clearInterval(countdownInterval);
+                    sendButton.disabled = false;
+                    sendButton.textContent = "发送验证码";
                 }
-            }, 1000);  // 1000毫秒 = 1秒
+            }, 1000);
         }
     </script>
 </body>

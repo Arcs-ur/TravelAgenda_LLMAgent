@@ -22,6 +22,7 @@
     <div class="mb-4">
         <h4>添加新的日程</h4>
         <form action="/add-itinerary" method="POST">
+            {% csrf_token %}
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="输入目的地" name="destination" required>
                 <input type="date" class="form-control" name="date" required>
@@ -34,6 +35,7 @@
     <div class="mb-4">
         <h4>搜索日程</h4>
         <form action="/search-itinerary" method="GET">
+            {% csrf_token %}
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="按目的地搜索" name="query" required>
                 <button class="btn btn-primary" type="submit">Search</button>
