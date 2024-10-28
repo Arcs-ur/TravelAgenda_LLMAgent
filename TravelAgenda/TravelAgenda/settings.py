@@ -143,3 +143,11 @@ EMAIL_USE_SSL = True
 
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
+
+# CSP_DEFAULT_SRC = ["'self'"]
+# CSP_SCRIPT_SRC = ["'self'"]
+# CSP_STYLE_SRC = ["'self'"]
+# CSP_IMG_SRC = ["'self'"]
+# CSP_FONT_SRC = ["'self'"]
+# CSP_OBJECT_SRC = ["'none'"]
+# CSP_FRAME_ANCESTORS = ["'none'"]

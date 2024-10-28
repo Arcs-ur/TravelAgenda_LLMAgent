@@ -11,7 +11,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
-
+from decouple import config
+from destinations.models import Destination
 # def agenda_main(request):
 #     return render(request, 'agenda/main.html')
 
@@ -136,12 +137,74 @@ def calendar_view(request):
 @csrf_protect
 def call_api(request):
     if request.method == 'POST':
-        # 从请求中获取目的地和天数
-        data = json.loads(request.body)  # 解析JSON请求体
-        destination = data.get('destination')  # 从解析后的数据中获取目的地
-        departure_date = data.get('departure_date')  # 从解析后的数据中获取出发时间
-        return_date = data.get('return_date')  # 从解析后的数据中获取返回时间
+        data = json.loads(request.body)
+        destination_name = data.get('destination')
+        setoff_city = data.get('departure_city')
+        departure_date = data.get('departure_date')
+        return_date = data.get('return_date')
+        play_types = data.get('play_type',[])
+        hotel_prices = data.get('hotel_price',[])
+        text_content = ""
+        PRICE_RANGES = {
+        'BUDGET': (0, 400),  # 400以内
+        'MID': (400, 800),  # 400-800
+        'LUXURY': (800, None),  # 800以上
+        'ALL': (None, None)  # No filtering if 'ALL' is selected
+    }
+        if hotel_prices:
+            price_conditions = None
+            hotels_query = Destination.objects.filter(tags='HOTEL')
+            for price_category in hotel_prices:
+                if price_category == 'ALL':
+                    price_conditions = None
+                    break  
+                price_min, price_max = PRICE_RANGES.get(price_category, (None, None))
+                if price_min is not None and price_max is not None:
+                    hotels_query = hotels_query.filter(cost__gte=price_min, cost__lte=price_max)
+                elif price_min is not None:
+                    hotels_query = hotels_query.filter(cost__gte=price_min)
+            hotels = hotels_query
+            text_content += "推荐的旅馆:\n"
+            for hotel in hotels:
+                text_content += f"名称: {hotel.name}, 地址: {hotel.address}, 星级: {hotel.stars}\n"
+            text_content += "\n"
         
+        if 'FOOD' in play_types:
+            text_content += "推荐的美食:\n"
+            eat_shopping_destinations = Destination.objects.filter(tags__in=['EAT'])
+            for destination in eat_shopping_destinations:
+                text_content += f"名称: {destination.name}, 地址: {destination.address}\n"
+            text_content += "\n"
+        
+        if 'SHOPPING' in play_types:
+            text_content += "推荐的购物景点:\n"
+            eat_shopping_destinations = Destination.objects.filter(tags__in=['VISIT'])
+            for destination in eat_shopping_destinations:
+                text_content += f"名称: {destination.name}, 地址: {destination.address}\n"
+            text_content += "\n"
+
+        if play_types:
+            text_content += "推荐的游玩地点:\n"
+            play_destinations = Destination.objects.filter(tags='PLAY', play_type__in=play_types)
+            for play_destination in play_destinations:
+                text_content += f"名称: {play_destination.name}, 地址: {play_destination.address}\n"
+            text_content += "\n"
+            
+        with open('destination_knowledge_base.txt', 'w', encoding='utf-8') as file:
+            file.write(text_content)
+        
+        with open('destination_knowledge_base.txt', 'r', encoding='utf-8') as file:
+            knowledge_base = file.read()
+        
+        prompt = (
+            f"请基于以下提供的信息为我设计一份详细的旅行日程规划。日程应从{departure_date}出发至{destination_name}，"
+            f"在{return_date}返回。我希望能够涵盖每日的活动安排、包括游玩景点、通勤时间、通勤方式以及餐饮时间（如早餐、午餐和晚餐）。"
+            f"此外，若有其他值得推荐的景点或活动，请一并补充到行程中。以下是相关信息：\n\n"
+            f"{knowledge_base}\n\n"
+            "请根据这些信息，生成一个完整且有趣的旅行计划。"
+        )
+
+
         url = 'https://spark-api-open.xf-yun.com/v1/chat/completions'  # API的URL
         
         # 创建payload，包含目的地和天数
@@ -150,13 +213,13 @@ def call_api(request):
             'messages': [
                 {
                     'role': 'user',
-                    'content': f'为我提供从{departure_date}出发到{destination}，在{return_date}返回的旅行日程'
+                    'content': prompt
                 }
             ],
              'stream': False  # 设置为非流式响应
         }
 
-        bearer_token = 'PzfmyIDmgfUOEZGdLmNB:ZfmpxbVMijaJThZaVWeQ'  # 替换为实际的令牌
+        bearer_token = config('API_KEY')
 
         # 设置请求头
         headers = {
@@ -174,7 +237,7 @@ def call_api(request):
             # 解析响应内容，假设返回结果为JSON格式
             response_data = response.json()
             result_text = response_data.get('choices', [{}])[0].get('message', {}).get('content', '')
-
+            print(result_text)
             # 返回合并后的结果
             return JsonResponse({'result': result_text})  
 
