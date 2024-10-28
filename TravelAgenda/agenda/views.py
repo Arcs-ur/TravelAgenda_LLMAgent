@@ -23,7 +23,7 @@ def agenda_calendar(request):
     return render(request, 'agenda/calendar.html')
 
 def agenda_map(request):
-    return render(request, 'agenda/map.html')
+    return render(request, 'agenda/map_new.html') # zsz
 
 def agenda_LLM(request):
     return render(request, 'agenda/LLM.html')
