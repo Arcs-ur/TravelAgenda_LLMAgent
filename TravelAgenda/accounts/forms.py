@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser  # 确保从你的模型中导入 CustomUser
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
+
 
 class CustomUserCreationForm(UserCreationForm):
     verification_code = forms.CharField(max_length=6, required=True, label="验证码", widget=forms.TextInput(attrs={'placeholder': '请输入验证码'}))
@@ -24,6 +26,12 @@ class CustomUserCreationForm(UserCreationForm):
         if CustomUser.objects.filter(username=username).exists():
             raise ValidationError("此用户名已被注册。")
         return username
+    
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if CustomUser.objects.filter(email=email).exists():
+            raise ValidationError("此邮箱已被注册。")
+        return email
     
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -55,6 +63,15 @@ class CustomUserCreationForm(UserCreationForm):
             raise ValidationError("密码至少需要8个字符,且包含数字，大写字母，小写字母。")
 
         return cleaned_data
+    
+    def clean_verification_code(self):
+        code = self.cleaned_data.get('verification_code')
+        email = self.cleaned_data.get('email')
+
+        stored_code = cache.get(email)
+        if code != stored_code:
+            raise ValidationError("验证码错误，请重新输入。")
+        return code
 
 class ResetPasswordForm(forms.Form):
     new_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}))

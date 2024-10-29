@@ -28,6 +28,7 @@ def send_verification_code(email):
 def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+
         if form.is_valid():
             email = form.cleaned_data.get('email')
             verification_code = form.cleaned_data.get('verification_code')
@@ -54,6 +55,8 @@ def send_code_view(request):
             data = json.loads(request.body)
             email = data.get('email')
             if email:
+                if CustomUser.objects.filter(email=email).exists():
+                    return JsonResponse({'error': '此邮箱已被注册。'}, status=400)
                 send_verification_code(email)
                 return JsonResponse({'message': '验证码已发送，请检查您的邮箱。'}, status=200)
             else:
