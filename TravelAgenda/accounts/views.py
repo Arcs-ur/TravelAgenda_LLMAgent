@@ -9,6 +9,7 @@ import string
 from django.http import JsonResponse
 import json
 from .models import CustomUser
+from .forms import ResetPasswordForm
 
 def send_verification_code(email):
     code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -108,15 +109,20 @@ def verify_code_view(request):
 
 def reset_password_view(request):
     if request.method == 'POST':
-        new_password = request.POST.get('new_password')
-        confirm_password = request.POST.get('confirm_password')
-        email = request.session.get('verified_email')
-        if new_password == confirm_password:
-            user = CustomUser.objects.get(email=email)  # 根据邮箱获取用户
-            user.set_password(new_password)  # 设置新密码
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            new_password = form.cleaned_data['new_password']
+            email = request.session.get('verified_email')
+            user = CustomUser.objects.get(email=email)
+            user.set_password(new_password)
             user.save()
             messages.success(request, '密码重置成功，请登录。')
-            return redirect('accounts:login')  # 重定向到登录页面
+            return redirect('accounts:login')
         else:
-            messages.error(request, '两次输入的密码不一致。')
-    return render(request, 'accounts/reset_password.html')
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = ResetPasswordForm()
+    
+    return render(request, 'accounts/reset_password.html', {'form': form})

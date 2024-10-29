@@ -43,15 +43,46 @@ class CustomUserCreationForm(UserCreationForm):
             raise ValidationError("密码不能与用户名相同。")
 
         if password and len(password) < 8:
-            raise ValidationError("密码长度过短，至少需要8个字符。")
+            raise ValidationError("密码长度过短，至少需要8个字符,且包含数字，大写字母，小写字母。")
 
         if password and not any(char.isdigit() for char in password):
-            raise ValidationError("密码必须至少包含一个数字。")
+            raise ValidationError("密码至少需要8个字符,且包含数字，大写字母，小写字母。")
         
         if password and not any(char.isupper() for char in password):
-            raise ValidationError("密码必须至少包含一个大写字母。")
+            raise ValidationError("密码至少需要8个字符,且包含数字，大写字母，小写字母。")
         
         if password and not any(char.islower() for char in password):
-            raise ValidationError("密码必须至少包含一个小写字母。")
+            raise ValidationError("密码至少需要8个字符,且包含数字，大写字母，小写字母。")
+
+        return cleaned_data
+
+class ResetPasswordForm(forms.Form):
+    new_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}))
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}))
+
+    def clean_new_password(self):
+        password = self.cleaned_data.get("new_password")
+
+        if len(password) < 8:
+            raise ValidationError("密码长度过短，至少需要8个字符，且包含数字，大写字母，小写字母。")
+
+        if not any(char.isdigit() for char in password):
+            raise ValidationError("密码至少需要8个字符,且包含数字，大写字母，小写字母。")
+
+        if not any(char.isupper() for char in password):
+            raise ValidationError("密码至少需要8个字符,且包含数字，大写字母，小写字母。")
+
+        if not any(char.islower() for char in password):
+            raise ValidationError("密码至少需要8个字符,且包含数字，大写字母，小写字母。")
+
+        return password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password and password != confirm_password:
+            raise ValidationError("两次输入的密码不一致。")
 
         return cleaned_data
