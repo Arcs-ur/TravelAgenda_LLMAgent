@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Forgot Password</title>
+    <title>Verify Code</title>
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
 <body>
@@ -17,37 +17,38 @@
                     <div class="card-group d-block d-md-flex row">
                         <div class="card col-md-7 p-4 mb-0">
                             <div class="card-body">
-                                <h1>Forgot Password</h1>
-                                <p class="text-body-secondary">Enter your email to receive a verification code.</p>
+                                <h1>Verify Code</h1>
+                                <p class="text-body-secondary">Enter the verification code sent to your email.</p>
 
-                                <form id="forgotPasswordForm" method="post">
+                                {% if messages %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {% for message in messages %}
+                                            <div>{{ message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <form method="post">
                                     {% csrf_token %}
                                     <div class="input-group mb-4">
                                         <span class="input-group-text">
                                             <svg class="icon">
-                                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
+                                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-check-circle"></use>
                                             </svg>
                                         </span>
-                                        <input class="form-control" type="email" name="email" placeholder="Email" required>
+                                        <input class="form-control" type="text" name="code" placeholder="Verification Code" required>
                                     </div>
-                                    <button class="btn btn-primary px-4" type="submit">Send Verification Code</button>
+                                    <input type="hidden" name="email" value="{{ request.session.verified_email }}">
+                                    <button class="btn btn-primary px-4" type="submit">Verify Code</button>
                                 </form>
-
-                                {% if messages %}
-                                    <div id="responseMessage">
-                                        {% for message in messages %}
-                                            <div style="color: red;">{{ message }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
                             </div>
                         </div>
                         <div class="card col-md-5 text-white bg-primary py-5">
                             <div class="card-body text-center">
                                 <div>
-                                    <h2>Back to Login</h2>
-                                    <p>If you remember your password, you can go back to the login page.</p>
-                                    <a href="{% url 'accounts:login' %}" class="btn btn-lg btn-outline-light mt-3">Login Now!</a> 
+                                    <h2>Back to Forgot Password</h2>
+                                    <p>If you want to resend the code, go back.</p>
+                                    <a href="{% url 'accounts:forgot_password' %}" class="btn btn-lg btn-outline-light mt-3">Back</a> 
                                 </div>
                             </div>
                         </div>
