@@ -15,6 +15,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProfileUpdateForm
 from django.conf import settings
 
+from django.contrib.auth import update_session_auth_hash
+from .forms import CustomPasswordChangeForm
+
 def send_verification_code(email):
     code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
     send_mail(
@@ -152,3 +155,24 @@ def profile_view(request):
     })
 
     return render(request, 'accounts/profile.html', {'form': form})
+
+@login_required
+def settings_view(request):
+    return render(request, 'accounts/settings.html')
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # 保持用户登录状态
+            messages.success(request, '密码修改成功！')  # 提示用户
+            return redirect('accounts:settings')  # 修改成功后重定向
+        else:
+            # 提示用户表单有误
+            messages.error(request, '修改密码时出现问题，请检查您的输入。')
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+
+    return render(request, 'accounts/change_password.html', {'form': form})

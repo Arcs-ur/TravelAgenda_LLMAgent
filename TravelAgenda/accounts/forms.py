@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser  # 确保从你的模型中导入 CustomUser
 from django.core.exceptions import ValidationError
 from django.core.cache import cache
+from django.contrib.auth.forms import PasswordChangeForm
 
 class CustomUserCreationForm(UserCreationForm):
     verification_code = forms.CharField(max_length=6, required=True, label="验证码", widget=forms.TextInput(attrs={'placeholder': '请输入验证码'}))
@@ -112,3 +113,34 @@ class ProfileUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'placeholder': '用户名'})
         self.fields['email'].widget.attrs.update({'placeholder': '邮箱'})
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    
+    class Meta:
+        model = CustomUser
+        fields = ('old_password', 'new_password1', 'new_password2')
+
+    def clean_new_password1(self):
+        password = self.cleaned_data.get("new_password1")
+
+        if len(password) < 8:
+            raise ValidationError("密码长度过短，至少需要8个字符，且包含数字、大写字母和小写字母。")
+
+        if not any(char.isdigit() for char in password):
+            raise ValidationError("密码至少需要8个字符，且包含数字、大写字母和小写字母。")
+
+        if not any(char.isupper() for char in password):
+            raise ValidationError("密码至少需要8个字符，且包含数字、大写字母和小写字母。")
+
+        if not any(char.islower() for char in password):
+            raise ValidationError("密码至少需要8个字符，且包含数字、大写字母和小写字母。")
+
+        return password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password1 = cleaned_data.get("new_password1")
+        new_password2 = cleaned_data.get("new_password2")
+
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            raise ValidationError("新密码和确认密码不匹配。")
