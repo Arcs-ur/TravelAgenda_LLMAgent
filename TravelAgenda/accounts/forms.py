@@ -4,7 +4,6 @@ from .models import CustomUser  # 确保从你的模型中导入 CustomUser
 from django.core.exceptions import ValidationError
 from django.core.cache import cache
 
-
 class CustomUserCreationForm(UserCreationForm):
     verification_code = forms.CharField(max_length=6, required=True, label="验证码", widget=forms.TextInput(attrs={'placeholder': '请输入验证码'}))
 
@@ -103,3 +102,13 @@ class ResetPasswordForm(forms.Form):
             raise ValidationError("两次输入的密码不一致。")
 
         return cleaned_data
+    
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'profile_picture'] 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'placeholder': '用户名'})
+        self.fields['email'].widget.attrs.update({'placeholder': '邮箱'})

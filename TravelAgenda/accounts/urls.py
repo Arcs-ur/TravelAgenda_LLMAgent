@@ -9,4 +9,5 @@ urlpatterns = [
     path('forgot_password/', views.forgot_password_view, name='forgot_password'),  # 忘记密码页面
     path('verify_code/', views.verify_code_view, name='verify_code'),  # 验证码验证页面
     path('reset_password/', views.reset_password_view, name='reset_password'),  # 重置密码页面
+    path('profile/', views.profile_view, name='profile'),#个人资料页面
 ]

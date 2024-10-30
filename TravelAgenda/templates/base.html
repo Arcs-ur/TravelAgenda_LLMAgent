@@ -300,7 +300,11 @@
                                 <a class="dropdown-item" href="#">
                                     <div class="d-flex">
                                         <div class="avatar flex-shrink-0 my-3 me-3">
-                                            <img class="avatar-img" src="{% static 'img/avatars/1.jpg' %}" alt="user@email.com">
+                                          {% if user.profile_picture and user.profile_picture.url %}
+                                              <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="max-width: 45px; max-height: 45px; width: auto; height: auto; border-radius: 50%;" />
+                                          {% else %}
+                                              <img class="avatar-img" src="/static/assets/img/avatars/8.jpg" alt="user@email.com" style="max-width: 45px; max-height: 45px; width: auto; height: auto; border-radius: 50%;" />
+                                          {% endif %}
                                             <span class="avatar-status bg-success"></span>
                                         </div>
                                         <div class="message text-wrap">
@@ -386,7 +390,11 @@
                         <li class="nav-item dropdown">
                           <a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <div class="avatar avatar-md">
-                              <img class="avatar-img" src="/static/assets/img/avatars/8.jpg" alt="user@email.com">
+                              {% if user.profile_picture and user.profile_picture.url %}
+                                  <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="max-width: 45px; max-height: 45px; width: auto; height: auto; border-radius: 50%;" />
+                              {% else %}
+                                  <img class="avatar-img" src="/static/assets/img/avatars/8.jpg" alt="user@email.com" style="max-width: 45px; max-height: 45px; width: auto; height: auto; border-radius: 50%;" />
+                              {% endif %}
                             </div>
                           </a>
                           <div class="dropdown-menu dropdown-menu-end pt-0">
@@ -407,7 +415,7 @@
                               <span class="badge badge-sm bg-warning-gradient ms-2">42</span>
                             </a>
                             <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2" data-coreui-i18n="settings">Settings</div>
-                            <a class="dropdown-item" href="/profile">
+                            <a class="dropdown-item" href="/accounts/profile">
                               <i class="bi bi-person me-2"></i>
                               <span data-coreui-i18n="profile">Profile</span>
                             </a>
