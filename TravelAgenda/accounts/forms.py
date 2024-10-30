@@ -106,7 +106,7 @@ class ResetPasswordForm(forms.Form):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'profile_picture'] 
+        fields = ['username', 'email', 'phone_number','profile_picture'] 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -144,7 +144,7 @@ def profile_view(request):
         form = ProfileUpdateForm(instance=user)
 
     # 处理头像的显示
-    profile_picture_url = user.profile_picture.url if user.profile_picture else '/static/default_avatar.png'
+    profile_picture_url = user.profile_picture.url if user.profile_picture else '/static/assets/img/avatars/8.jpg'
 
     return render(request, 'accounts/profile.html', {
         'form': form,
