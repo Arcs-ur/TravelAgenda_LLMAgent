@@ -32,8 +32,8 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'placeholder': 'Write a comment...', 'rows': 3}),
         }
-from django.forms.models import inlineformset_factory
-ImageFormSet = inlineformset_factory(Post, Image, form=forms.ModelForm, fields=['image'], extra=3, can_delete=True)
+# from django.forms.models import inlineformset_factory
+# ImageFormSet = inlineformset_factory(Post, Image, form=forms.ModelForm, fields=['image'], extra=3, can_delete=True)
 
 # class PostUpdateForm(forms.ModelForm):
 #     class Meta:

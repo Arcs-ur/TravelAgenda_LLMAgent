@@ -14,7 +14,7 @@ from django.views.generic import ListView,CreateView,DetailView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin 
 
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
 
 from .serializers import PostSerializer, ImageSerializer, PostSendSerializer
 from .models import Post, Image, Comment
@@ -47,6 +47,9 @@ class MyPostListView(LoginRequiredMixin,ListView):
     paginate_by = 10
     def get_queryset(self):
         queryset = Post.objects.filter(user=self.request.user)
+        queryset = Post.objects.filter(user=self.request.user).annotate(
+            local_created_at=F('created_at')  # 或用Now()调整为本地时间
+        ).order_by('-local_created_at')  # 按上海时间倒序排序
         query = self.request.GET.get('q')  
         if query:
             queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
@@ -87,7 +90,19 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         # 获取上下文数据，将帖子表单和图片表单一起传递给模板
         data = super().get_context_data(**kwargs)
-        ImageFormSet = inlineformset_factory(Post, Image, form=ImageForm, fields=['image'], extra=1, can_delete=True)
+
+        # 获取现有图片数量
+        existing_images_count = self.object.images.count()
+        print(existing_images_count)
+        # 动态设置 extra：如果已有9张图片，则不添加额外表单
+        extra_forms = 0 if existing_images_count >= 9 else 1
+        
+        # 创建动态的 ImageFormSet
+        ImageFormSet = inlineformset_factory(
+            Post, Image, form=ImageForm, fields=['image'], extra=extra_forms, can_delete=True
+        )
+
+        #ImageFormSet = inlineformset_factory(Post, Image, form=ImageForm, fields=['image'], extra=1, can_delete=True)
         
         if self.request.POST:
             data['image_formset'] = ImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
@@ -123,6 +138,7 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     
     def get_success_url(self) -> str:
         return super().get_success_url()
+
 # 用户自己的帖子的详情展示页面
 class MyPostDetailView(LoginRequiredMixin, ListView):
     model = Comment

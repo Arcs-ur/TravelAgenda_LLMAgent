@@ -40,14 +40,14 @@
                 <div class="col-md-6">
                     <div class="card mb-4 mx-4">
                         <div class="card-body p-4">
-<<<<<<< HEAD
+
                             <h1>注册</h1>
                             <p class="text-body-secondary">创建您的账户</p>
-=======
+
                             <h1>Register</h1>
                             <p class="text-body-secondary">Create your account</p>
 
->>>>>>> hyx
+
                             <form method="POST" action="{% url 'accounts:register' %}">
                                 {% csrf_token %}
                                 {% if form.non_field_errors %}
@@ -64,10 +64,7 @@
                                         </svg>
                                     </span>
                                     {{ form.username }}
-<<<<<<< HEAD
-=======
-                                    
->>>>>>> hyx
+
                                 </div>
                                 {% if form.username.errors %}
                                     <div class="text-danger">
@@ -83,10 +80,7 @@
                                         </svg>
                                     </span>
                                     {{ form.email }}
-<<<<<<< HEAD
-=======
-                                    
->>>>>>> hyx
+
                                 </div>
                                 {% if form.email.errors %}
                                     <div class="text-danger">
@@ -102,10 +96,7 @@
                                         </svg>
                                     </span>
                                     {{ form.password1 }}
-<<<<<<< HEAD
-=======
-                                    
->>>>>>> hyx
+
                                 </div>
                                 {% if form.password1.errors %}
                                     <div class="text-danger">
@@ -120,11 +111,8 @@
                                             <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg#cil-lock-locked' %}"></use>
                                         </svg>
                                     </span>
-                                    {{ form.password2 }}
-<<<<<<< HEAD
-=======
-                                    
->>>>>>> hyx
+                                    {{ form.password2 }}        
+
                                 </div>
                                 {% if form.password2.errors %}
                                     <div class="text-danger">
@@ -142,7 +130,6 @@
                                     {{ form.verification_code }}
                                     <button type="button" class="btn btn-outline-secondary" id="send-code-btn" onclick="sendVerificationCode()">发送验证码</button>
                                 </div>
-<<<<<<< HEAD
                                 {% if form.verification_code.errors %}
                                     <div class="text-danger">
                                         {% for error in form.verification_code.errors %}
@@ -151,7 +138,6 @@
                                     </div>
                                 {% endif %}
                                 <button class="btn btn-block btn-success" type="submit">创建账户</button>
-=======
 
                                 <div class="text-danger mb-3" style="min-height: 24px;">
                                     {% if form.verification_code.errors %}
@@ -161,8 +147,7 @@
                                     {% endif %}
                                 </div>
 
-                                <button class="btn btn-block btn-success" type="submit">Create Account</button>
->>>>>>> hyx
+                                <!-- <button class="btn btn-block btn-success" type="submit">Create Account</button> -->
                             </form>
                         </div>
                     </div>
