@@ -151,20 +151,20 @@
 
         // 保存日程到 agendas/add
         try {
-            // const response = await fetch('agendas/add/', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
-            //     },
-            //     body: JSON.stringify({
-            //         AgendaForm: itineraryItems
-            //     })
-            // });
+            const response = await fetch('agendas/add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
+                },
+                body: JSON.stringify({
+                    AgendaForm: itineraryItems
+                })
+            });
 
-            // if (!response.ok) {
-            //     throw new Error('保存日程失败');
-            // }
+            if (!response.ok) {
+                throw new Error('保存日程失败');
+            }
 
             // 保存日程名称到 agendas/addtrip
             const tripNameResponse = await fetch('agendas/addtrip/', {
