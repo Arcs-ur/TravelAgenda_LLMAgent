@@ -32,3 +32,6 @@ home_assets是初始页面的和旅游推荐系统没关系
 
 7. templates模板
 利用模板继承base.html，实现各个子网页的前端开发，路由跳转用django的url模板实现
+
+8. database内容初始化模块
+在TravelAgenda文件夹下面加了一个databaseInit文件夹，里面放数据库内容“一键添加”的脚本，运行的时候要切到G3/TravelAgenda下面运行，python3 databaseInit/agenda_location_init.py类似于这样运行
