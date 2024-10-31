@@ -165,6 +165,15 @@ def calendar_view(request):
 
 @csrf_protect
 @login_required
+def location_search(request):
+    if request.is_ajax() and request.method == "GET":
+        query = request.GET.get('q', '')
+        locations = Location.objects.filter(name__icontains=query)[:10]
+        results = [{'id': loc.id, 'name': loc.name} for loc in locations]
+        return JsonResponse({'items': results})
+
+@csrf_protect
+@login_required
 def call_api(request):
     if request.method == 'POST':
         data = json.loads(request.body)
