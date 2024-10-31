@@ -14,8 +14,7 @@ from django.views.decorators.csrf import csrf_protect
 from decouple import config
 from destinations.models import Destination
 from django.contrib.auth.decorators import login_required
-# def agenda_main(request):
-#     return render(request, 'agenda/main.html')
+
 
 @csrf_protect
 @login_required
@@ -299,6 +298,7 @@ class AgendaListView(LoginRequiredMixin, ListView):
     #         queryset = queryset.filter(Q(departure_location__name__icontains=query)|Q(arrival_location__name__icontains=query)|Q(agenda__title__icontains=query))
     #     return queryset.values('agenda')
     @csrf_protect
+    @login_required
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')
