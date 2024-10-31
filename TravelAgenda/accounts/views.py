@@ -18,6 +18,8 @@ from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from .forms import CustomPasswordChangeForm
 
+from django.contrib.auth import logout
+
 def send_verification_code(email):
     code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
     send_mail(
@@ -62,14 +64,14 @@ def send_code_view(request):
             email = data.get('email')
             if email:
                 if CustomUser.objects.filter(email=email).exists():
-                    return JsonResponse({'error': '此邮箱已被注册。'}, status=400)
+                    return JsonResponse({'success': False, 'error': '此邮箱已被注册。'}, status=400)
                 send_verification_code(email)
-                return JsonResponse({'message': '验证码已发送，请检查您的邮箱。'}, status=200)
+                return JsonResponse({'success': True, 'message': '验证码已发送，请检查您的邮箱。'}, status=200)
             else:
-                return JsonResponse({'error': '请输入有效的邮箱地址。'}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': '无效请求。'}, status=400)
-    return JsonResponse({'error': '无效请求。'}, status=400)
+                return JsonResponse({'success': False, 'error': '请输入有效的邮箱地址。'}, status=400)
+        except json.JSONDecodeError as e:
+           return JsonResponse({'success': False, 'error': '请求解析失败', 'details': str(e)}, status=400)
+    return JsonResponse({'success': False, 'error': '无效请求，仅支持POST请求。'}, status=400)
 
 def login_view(request):
     if request.method == 'POST':
@@ -176,3 +178,7 @@ def change_password(request):
         form = CustomPasswordChangeForm(user=request.user)
 
     return render(request, 'accounts/change_password.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('accounts:login')  # 重定向到登录页面
