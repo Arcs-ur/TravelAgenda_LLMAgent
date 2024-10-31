@@ -1,4 +1,9 @@
-
+/**
+ * --------------------------------------------------------------------------
+ * CoreUI PRO Boostrap Admin Template config.js
+ * Licensed under MIT (https://github.com/coreui/coreui-free-bootstrap-admin-template/blob/main/LICENSE)
+ * --------------------------------------------------------------------------
+ */
 
 (() => {
   const THEME = 'coreui-pro-bootstrap-admin-template-theme-default';

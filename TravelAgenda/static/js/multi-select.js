@@ -1,4 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* global coreui */
 
+/**
+ * --------------------------------------------------------------------------
+ * CoreUI PRO Boostrap Admin Template multi-select.js
+ * License (https://coreui.io/pro/license/)
+ * --------------------------------------------------------------------------
+ */
 
 const options = [{
   value: 0,

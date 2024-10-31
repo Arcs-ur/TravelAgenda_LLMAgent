@@ -1,3 +1,11 @@
+/* global coreui */
+
+/**
+ * --------------------------------------------------------------------------
+ * CoreUI PRO Boostrap Admin Template toasts.js
+ * License (https://coreui.io/pro/license/)
+ * --------------------------------------------------------------------------
+ */
 
 const toastTrigger = document.getElementById('liveToastBtn');
 const toastLiveExample = document.getElementById('liveToast');

@@ -1,4 +1,11 @@
+/* global Chart, coreui, i18next */
 
+/**
+ * --------------------------------------------------------------------------
+ * CoreUI PRO Boostrap Admin Template main.js
+ * License (https://coreui.io/pro/license/)
+ * --------------------------------------------------------------------------
+ */
 
 // Disable the on-canvas tooltip
 

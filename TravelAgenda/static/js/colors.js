@@ -1,3 +1,11 @@
+/* global coreui */
+
+/**
+ * --------------------------------------------------------------------------
+ * CoreUI PRO Boostrap Admin Template colors.js
+ * License (https://coreui.io/pro/license/)
+ * --------------------------------------------------------------------------
+ */
 
 for (const element of document.querySelectorAll('.theme-color')) {
   const color = getComputedStyle(element, null).getPropertyValue('background-color');

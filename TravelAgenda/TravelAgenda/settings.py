@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ai2(3j-+7v6gu)ah)^4r4a3wxg=wc9ozsowmqovsd#c+-l=yf+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','124.70.128.73']
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 # Application definition
@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'destinations',
     'dashboard',
     'posts',
-    'rest_framework',
-    #'csp'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -56,9 +55,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #"csp.middleware.CSPMiddleware",
-   
-
 ]
 
 ROOT_URLCONF = 'TravelAgenda.urls'
@@ -97,18 +93,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-        # {
-        #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-        # },
-        # {
-        #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        # },
-        # {
-        #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-        # },
-        # {
-        #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-        # },
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 
@@ -117,12 +113,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
-TIME_ZONE = 'Asia/Shanghai'
-USE_TZ = True
 
+USE_TZ = True
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 # Static files (CSS, JavaScript, Images)
@@ -148,11 +143,6 @@ EMAIL_USE_SSL = True
 
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
-
-# CSP_DEFAULT_SRC = ("'self'", "*.example.com")
-# CSP_SCRIPT_SRC = ("'self'", "https://js.cdn.com/example/")
-# CSP_IMG_SRC = ("'self'", "data:", "https://example.com")
-# CSP_EXCLUDE_URL_PREFIXES = ("/admin",)
 
 # CSP_DEFAULT_SRC = ["'self'"]
 # CSP_SCRIPT_SRC = ["'self'"]
