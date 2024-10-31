@@ -13,43 +13,52 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from decouple import config
 from destinations.models import Destination
+from django.contrib.auth.decorators import login_required
 # def agenda_main(request):
 #     return render(request, 'agenda/main.html')
 
 @csrf_protect
+@login_required
 def agenda_main(request):
     agendas = Agenda.objects.all()  # 获取所有 Agenda 实例
     return render(request, 'agenda/main.html', {'agendas': agendas})
 
 @csrf_protect
+@login_required
 def agenda_calendar(request):
     return render(request, 'agenda/calendar.html')
 
 @csrf_protect
+@login_required
 def agenda_map(request):
     return render(request, 'agenda/map_new.html') # zsz
 
 @csrf_protect
+@login_required
 def agenda_LLM(request):
     return render(request, 'agenda/LLM.html')
 
 @csrf_protect
+@login_required
 def agenda_my(request):
     agendas = Agenda.objects.all()
     return render(request, 'agenda/myagenda.html', {'agendas': agendas})
 
 @csrf_protect
+@login_required
 def agenda_list(request):
     agendas = Agenda.objects.all()
     return render(request, 'agenda/agenda_list.html', {'agendas': agendas})
 
 @csrf_protect
+@login_required
 def delete_agenda(request, id):
     agenda = get_object_or_404(Agenda, id=id)
     agenda.delete()
     return redirect('agenda:agenda_list')
 
 @csrf_protect
+@login_required
 def delete_agendalocation(request, id):
     loc = get_object_or_404(AgendaLocation, id=id)
     loc.delete()
@@ -68,6 +77,7 @@ def delete_agendalocation(request, id):
 #     return redirect('agenda:agenda_list')
     # 处理更新逻辑（例如，显示表单并保存数据）
 @csrf_protect
+@login_required
 def update_agenda(request, id):
     agenda = get_object_or_404(Agenda, id=id)
     if request.method == 'POST':
@@ -84,6 +94,7 @@ def update_agenda(request, id):
         'agenda': agenda,  # 传递当前日程对象
     })
 @csrf_protect
+@login_required
 def update_agendalocation(request,id):
     loc = get_object_or_404(AgendaLocation, id=id)  # 获取 AgendaLocation 对象
     agenda = loc.agenda
@@ -102,6 +113,7 @@ def update_agendalocation(request,id):
     })
 
 @csrf_protect
+@login_required
 def add_agenda(request):
     if request.method == 'POST':
         form = AgendaForm(request.POST)
@@ -112,6 +124,7 @@ def add_agenda(request):
         form = AgendaForm()
     return render(request, 'agenda/add_agenda.html', {'form': form})
 @csrf_protect
+@login_required
 def add_Travelagenda(request):
     if request.method == 'POST':
         
@@ -129,6 +142,7 @@ def add_Travelagenda(request):
     return render(request, 'agenda/add_Travelagenda.html', {'form': form})
 
 @csrf_protect
+@login_required
 def calendar_view(request):
     # 获取所有的 Agenda 相关数据
     agendalocations = AgendaLocation.objects.all()
@@ -151,6 +165,7 @@ def calendar_view(request):
     return render(request, 'agenda/calendar.html', context)
 
 @csrf_protect
+@login_required
 def call_api(request):
     if request.method == 'POST':
         data = json.loads(request.body)
