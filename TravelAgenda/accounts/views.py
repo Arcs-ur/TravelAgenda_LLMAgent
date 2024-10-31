@@ -18,6 +18,8 @@ from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from .forms import CustomPasswordChangeForm
 
+from django.contrib.auth import logout
+
 def send_verification_code(email):
     code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
     send_mail(
@@ -176,3 +178,7 @@ def change_password(request):
         form = CustomPasswordChangeForm(user=request.user)
 
     return render(request, 'accounts/change_password.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('accounts:login')  # 重定向到登录页面
