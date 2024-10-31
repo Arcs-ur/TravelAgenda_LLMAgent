@@ -487,13 +487,25 @@
         <script src="{% static 'js/i18next.js' %}"></script>
 
         <script>
-        const header = document.querySelector('header.header');
+        // const header = document.querySelector('header.header');
+
+        // document.addEventListener('scroll', () => {
+        //     if (header) {
+        //     header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+        //     }
+        // });
+        let isScrolling;
 
         document.addEventListener('scroll', () => {
-            if (header) {
-            header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
-            }
+            window.clearTimeout(isScrolling);
+
+            isScrolling = setTimeout(() => {
+                if (header) {
+                    header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+                }
+            }, 100); // adjust the debounce delay as needed
         });
+
         </script>
 
         <script>

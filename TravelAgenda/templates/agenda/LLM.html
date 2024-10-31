@@ -62,6 +62,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="must_play" class="form-label">我很想去</label>
+            <input type="text" class="form-control" id="must_play" name="must_play" placeholder="输入一定要去的景点" required>
+        </div>
+
+        <div class="mb-3">
             <label for="hotel_price" class="form-label">旅馆价位偏好</label>
             <select class="form-multi-select" multiple data-coreui-search="true" id="hotel_price" name="hotel_price">
                 <option value="BUDGET">经济型（400以内）</option>
@@ -96,6 +101,8 @@
         const returnDate = document.getElementById('return_date').value;
         const playType = document.getElementById('play_type').value;
         const hotelPrice = document.getElementById('hotel_price').value;
+        const mustplay = document.getElementById('must_play').value;
+
 
         // 发送请求到后端API
         try {
@@ -111,7 +118,8 @@
                     departure_date: departureDate,
                     return_date: returnDate,
                     play_type: playType,
-                    hotel_price: hotelPrice
+                    hotel_price: hotelPrice,
+                    must_play: mustplay
                 })
             });
 
@@ -143,20 +151,20 @@
 
         // 保存日程到 agendas/add
         try {
-            const response = await fetch('agendas/add/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
-                },
-                body: JSON.stringify({
-                    AgendaForm: itineraryItems
-                })
-            });
+            // const response = await fetch('agendas/add/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
+            //     },
+            //     body: JSON.stringify({
+            //         AgendaForm: itineraryItems
+            //     })
+            // });
 
-            if (!response.ok) {
-                throw new Error('保存日程失败');
-            }
+            // if (!response.ok) {
+            //     throw new Error('保存日程失败');
+            // }
 
             // 保存日程名称到 agendas/addtrip
             const tripNameResponse = await fetch('agendas/addtrip/', {
@@ -166,15 +174,16 @@
                     'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
                 },
                 body: JSON.stringify({
-                    TravelAgendaForm: `${destination} Trip`
+                    'title': `${destination} Trip`
                 })
             });
 
             if (!tripNameResponse.ok) {
                 throw new Error('保存日程名称失败');
             }
-
-            alert('日程保存成功！');
+            else{
+                alert('日程保存成功！');
+            }
         } catch (error) {
             console.error('发生错误:', error);
             alert(`保存日程时出错：${error.message}`);

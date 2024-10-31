@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ai2(3j-+7v6gu)ah)^4r4a3wxg=wc9ozsowmqovsd#c+-l=yf+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','124.70.128.73']
 
 
 # Application definition
@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'destinations',
     'dashboard',
     'posts',
-    'rest_framework'
+    'rest_framework',
+    #'csp'
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #"csp.middleware.CSPMiddleware",
+   
+
 ]
 
 ROOT_URLCONF = 'TravelAgenda.urls'
@@ -144,6 +148,11 @@ EMAIL_USE_SSL = True
 
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
+
+# CSP_DEFAULT_SRC = ("'self'", "*.example.com")
+# CSP_SCRIPT_SRC = ("'self'", "https://js.cdn.com/example/")
+# CSP_IMG_SRC = ("'self'", "data:", "https://example.com")
+# CSP_EXCLUDE_URL_PREFIXES = ("/admin",)
 
 # CSP_DEFAULT_SRC = ["'self'"]
 # CSP_SCRIPT_SRC = ["'self'"]

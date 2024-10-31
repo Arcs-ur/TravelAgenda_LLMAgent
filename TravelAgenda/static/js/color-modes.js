@@ -1,9 +1,3 @@
-/*!
-* Color mode toggler for CoreUI's docs (https://coreui.io/)
-* Copyright (c) 2023 creativeLabs Łukasz Holeczek
-* Licensed under the Creative Commons Attribution 3.0 Unported License.
-*/
-
 (() => {
   const THEME = 'coreui-pro-bootstrap-admin-template-theme-default';
   const getStoredTheme = () => localStorage.getItem(THEME);
