@@ -159,7 +159,8 @@ def call_api(request):
         departure_date = data.get('departure_date')
         return_date = data.get('return_date')
         play_types = data.get('play_type',[])
-        hotel_prices = data.get('hotel_price',[])
+        hotel_price = data.get('hotel_price',[])
+        must_play = data.get('must_play',[])
         text_content = ""
         PRICE_RANGES = {
         'BUDGET': (0, 400),  # 400以内
@@ -167,10 +168,10 @@ def call_api(request):
         'LUXURY': (800, None),  # 800以上
         'ALL': (None, None)  # No filtering if 'ALL' is selected
     }
-        if hotel_prices:
+        if hotel_price:
             price_conditions = None
             hotels_query = Destination.objects.filter(tags='HOTEL')
-            for price_category in hotel_prices:
+            for price_category in hotel_price:
                 if price_category == 'ALL':
                     price_conditions = None
                     break  
@@ -212,12 +213,15 @@ def call_api(request):
         with open('destination_knowledge_base.txt', 'r', encoding='utf-8') as file:
             knowledge_base = file.read()
         
+        print(f"Must play: {must_play}")
+        
         prompt = (
             f"请基于以下提供的信息为我设计一份详细的旅行日程规划。日程应从{departure_date}出发至{destination_name}，"
             f"在{return_date}返回。我希望能够涵盖每日的活动安排、包括游玩景点、通勤时间、通勤方式以及餐饮时间（如早餐、午餐和晚餐）。"
+            f"我一定要去的地方是{must_play},请务必将它详细安排在某一天的日程规划中"
             f"此外，若有其他值得推荐的景点或活动，请一并补充到行程中。以下是相关信息：\n\n"
             f"{knowledge_base}\n\n"
-            f"我偏好的游玩类型包括：{play_types}，并希望旅馆价格在{hotel_prices}范围内。"
+            f"我偏好的游玩类型包括：{play_types}，并希望旅馆价格在{hotel_price}范围内。"
             "请根据这些信息，生成一个完整且有趣的旅行计划。"
         )
 
