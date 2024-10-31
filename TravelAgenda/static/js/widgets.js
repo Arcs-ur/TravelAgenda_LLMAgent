@@ -1,11 +1,4 @@
-/* global Chart, coreui */
 
-/**
- * --------------------------------------------------------------------------
- * CoreUI PRO Boostrap Admin Template widgets.js
- * License (https://coreui.io/pro/license/)
- * --------------------------------------------------------------------------
- */
 
 // Disable the on-canvas tooltip
 Chart.defaults.pointHitDetectionRadius = 1;

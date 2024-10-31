@@ -1,12 +1,3 @@
-/* global Chart */
-
-/**
- * --------------------------------------------------------------------------
- * CoreUI PRO Boostrap Admin Template main.js
- * License (https://coreui.io/pro/license/)
- * --------------------------------------------------------------------------
- */
-
 // random Numbers
 const random = () => Math.round(Math.random() * 100);
 

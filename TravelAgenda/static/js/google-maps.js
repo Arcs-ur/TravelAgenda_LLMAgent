@@ -1,10 +1,3 @@
-/* global google */
-/**
- * --------------------------------------------------------------------------
- * CoreUI PRO Boostrap Admin Template google-maps.js
- * License (https://coreui.io/pro/license/)
- * --------------------------------------------------------------------------
- */
 
 const initMap = () => {
   const locations = [{
