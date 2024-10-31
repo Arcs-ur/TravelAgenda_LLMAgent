@@ -201,6 +201,7 @@ def call_api(request):
             f"在{return_date}返回。我希望能够涵盖每日的活动安排、包括游玩景点、通勤时间、通勤方式以及餐饮时间（如早餐、午餐和晚餐）。"
             f"此外，若有其他值得推荐的景点或活动，请一并补充到行程中。以下是相关信息：\n\n"
             f"{knowledge_base}\n\n"
+            f"我偏好的游玩类型包括：{play_types}，并希望旅馆价格在{hotel_prices}范围内。"
             "请根据这些信息，生成一个完整且有趣的旅行计划。"
         )
 
@@ -219,7 +220,7 @@ def call_api(request):
              'stream': False  # 设置为非流式响应
         }
 
-        bearer_token = config('API_KEY')
+        bearer_token = 'PzfmyIDmgfUOEZGdLmNB:ZfmpxbVMijaJThZaVWeQ'
 
         # 设置请求头
         headers = {
