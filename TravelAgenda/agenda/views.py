@@ -213,8 +213,6 @@ def call_api(request):
         with open('destination_knowledge_base.txt', 'r', encoding='utf-8') as file:
             knowledge_base = file.read()
         
-        print(f"Must play: {must_play}")
-        
         prompt = (
             f"请基于以下提供的信息为我设计一份详细的旅行日程规划。日程应从{departure_date}出发至{destination_name}，"
             f"在{return_date}返回。我希望能够涵盖每日的活动安排、包括游玩景点、通勤时间、通勤方式以及餐饮时间（如早餐、午餐和晚餐）。"
