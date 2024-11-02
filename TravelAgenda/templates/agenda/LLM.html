@@ -69,10 +69,10 @@
         <div class="mb-3">
             <label for="hotel_price" class="form-label">旅馆价位偏好</label>
             <select class="form-multi-select" multiple data-coreui-search="true" id="hotel_price" name="hotel_price">
-                <option value="BUDGET">经济型（400以内）</option>
-                <option value="MID">中档(400-800)</option>
-                <option value="LUXURY">高档(800以上)</option>
-                <option value="ALL">无所谓</option>
+                <option value="400以内">经济型（400以内）</option>
+                <option value="400到800">中档(400-800)</option>
+                <option value="800以上">高档(800以上)</option>
+                <option value="都可以">无所谓</option>
             </select>
         </div>
 
@@ -140,32 +140,33 @@
         }
     });
         
-    document.getElementById('saveItinerary').addEventListener('click', async function() {
+    document.getElementById('saveItinerary').addEventListener('click', async function(){
         const destination = document.getElementById('destination').value;
-        const itineraryItems = Array.from(document.querySelectorAll('#itineraryList .list-group-item')).map(item => item.textContent).join('\n');
-        
+        const itineraryItems = Array.from(document.querySelectorAll('#itineraryList .list-group-item')).map(item => item);
         if (itineraryItems === '') {
             alert('请先生成日程！');
             return;
         }
-
-        // 保存日程到 agendas/add
         try {
-            const response = await fetch('agendas/add/', {
+            const response = await fetch('agendas/import/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
                 },
                 body: JSON.stringify({
-                    AgendaForm: itineraryItems
+                    'departure_location': '温州南站',
+                    'departure_time': '2024-11-03 13:00',
+                    'arrival_location': '上海虹桥站',
+                    'arrival_time': '2024-11-03 16:30',
+                    'commute_info': '乘坐G7510次高铁，全程约3小时30分钟。'
                 })
             });
 
             if (!response.ok) {
                 throw new Error('保存日程失败');
             }
-
+            
             // 保存日程名称到 agendas/addtrip
             const tripNameResponse = await fetch('agendas/addtrip/', {
                 method: 'POST',
@@ -188,6 +189,6 @@
             console.error('发生错误:', error);
             alert(`保存日程时出错：${error.message}`);
         }
-    });
+        });
 </script>
 {% endblock %}

@@ -19,6 +19,7 @@ urlpatterns = [
     path('myagenda', views.agenda_my, name='myagenda'),
     path('myagenda_find',views.AgendaListView.as_view(),name = 'agenda_find'),
     path('agendas/add/', views.add_agenda, name='add_agenda'),
+    path('agendas/import/', views.import_agenda, name='import_agenda'),
     path('agendas/addtrip/', views.add_Travelagenda, name='add_Travelagenda'),
     path('update/<int:id>/', views.update_agenda, name='update_agenda'),
     path('call_api/', views.call_api, name='call_api'),

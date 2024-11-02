@@ -119,9 +119,21 @@ def add_agenda(request):
         if form.is_valid():
             form.save()
             return redirect('agenda:agenda_list')  # 添加后重定向回日程列表
-    else:
-        form = AgendaForm()
     return render(request, 'agenda/add_agenda.html', {'form': form})
+
+@csrf_protect
+@login_required
+def import_agenda(request):
+    print(request.body)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        form = TravelAgendaForm(data)
+        if form.is_valid():
+            form.save()
+            return redirect('agenda:agenda_list')
+        form = AgendaForm(request.POST)
+    return render(request, 'agenda/add_agenda.html', {'form': form})
+
 @csrf_protect
 @login_required
 def add_Travelagenda(request):
@@ -186,28 +198,16 @@ def call_api(request):
         must_play = data.get('must_play',[])
         text_content = ""
         PRICE_RANGES = {
-        'BUDGET': (0, 400),  # 400以内
-        'MID': (400, 800),  # 400-800
-        'LUXURY': (800, None),  # 800以上
-        'ALL': (None, None)  # No filtering if 'ALL' is selected
+        '400以内': '400以内',  # 400以内
+        '400到800': '400到800',  # 400-800
+        '800以上': '800以上',  # 800以上
+        '都可以': '都可以'  # No filtering if 'ALL' is selected
     }
         if hotel_price:
             price_conditions = None
             hotels_query = Destination.objects.filter(tags='HOTEL')
-            for price_category in hotel_price:
-                if price_category == 'ALL':
-                    price_conditions = None
-                    break  
-                price_min, price_max = PRICE_RANGES.get(price_category, (None, None))
-                if price_min is not None and price_max is not None:
-                    hotels_query = hotels_query.filter(cost__gte=price_min, cost__lte=price_max)
-                elif price_min is not None:
-                    hotels_query = hotels_query.filter(cost__gte=price_min)
-            hotels = hotels_query
-            text_content += "推荐的旅馆:\n"
-            for hotel in hotels:
-                text_content += f"名称: {hotel.name}, 地址: {hotel.address}, 星级: {hotel.stars}\n"
-            text_content += "\n"
+            hotel_price = '400以内'
+            
         
         if 'FOOD' in play_types:
             text_content += "推荐的美食:\n"
@@ -235,18 +235,11 @@ def call_api(request):
         
         with open('destination_knowledge_base.txt', 'r', encoding='utf-8') as file:
             knowledge_base = file.read()
-        
+        #2024.11.01到2024.11.02，预计从温州出发，到南京游玩，我很想去中山陵，我的酒店预算每天在200~400元。
         prompt = (
-            f"请基于以下提供的信息为我设计一份详细的旅行日程规划。从{setoff_city}出发至{destination_name}，"
-            f"在{departure_date}出发，{return_date}返回。"
-            f"交通方式请具体到航班号或车次"
-            f"日程内容包括每日的游玩景点、通勤时间、通勤方式。"
-            f"景点间的通勤信息严格按照<出发时间><出发地点><到达时间><到达地点><交通方式>的格式展现"
-            f"我一定要去的地方是{must_play},请务必将它安排在某一天的日程规划中"
-            f"此外，若有其他值得推荐的景点或活动，请一并补充到行程中。以下是相关信息：\n\n"
-            f"{knowledge_base}\n\n"
-            f"我偏好的游玩类型包括：{play_types}，并希望旅馆价格在{hotel_price}范围内，请给出具体的酒店推荐。"
-            "请根据这些信息，生成一个完整且有趣的旅行计划。"
+
+            f"{departure_date}到{return_date},预计从{setoff_city}出发，到{destination_name}游玩，我很想去{must_play}，我酒店的预算在每天{hotel_price}"
+            
         )
 
 
@@ -257,8 +250,10 @@ def call_api(request):
             'model': 'generalv3.5',  # 指定请求的模型
             'messages': [
                 {
-                    'role': 'user',
-                    'content': prompt
+                    'role':'system','content':'你是一个严格按照格式来生成内容的人。禁止生成任何的“\”符号！！！！！禁止生成任何的换行符！！！！！需要根据给出的地点，时间等信息来给出一份旅游攻略，其中涉及到的地点、交通方式、时间、酒店、饭店等信息必须准确详细。每一份旅游计划内部的小行程，应当按照<departure_location:xxx><departure_time:xxx><arrival_location><arrival_time><commute_info:xxx>来严格输出，并组织成json格式，输出是去除开头的```json和结尾的```。此外我要求，涉及到地点的必须具体，不能模糊只出现城市名，应当写出具体的站名。酒店饭店等也需要在行程中体现，而不是单独的出现。涉及到交通方式应当写出具体的班次和时间。一个景点不应反复出现。用中文回答'
+                },
+                {
+                    'role':'user','content': prompt
                 }
             ],
              'stream': False  # 设置为非流式响应
