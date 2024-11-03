@@ -114,6 +114,7 @@ def update_agendalocation(request,id):
 @csrf_protect
 @login_required
 def add_agenda(request):
+    form = AgendaForm()
     if request.method == 'POST':
         form = AgendaForm(request.POST)
         if form.is_valid():
@@ -123,15 +124,29 @@ def add_agenda(request):
 
 @csrf_protect
 @login_required
+
 def import_agenda(request):
-    print(request.body)
     if request.method == 'POST':
-        data = json.loads(request.body)
-        form = TravelAgendaForm(data)
-        if form.is_valid():
-            form.save()
-            return redirect('agenda:agenda_list')
-        form = AgendaForm(request.POST)
+        try:
+            # 从请求体中解析 JSON 数据
+            data = json.loads(request.body)
+
+            # 将 JSON 数据转为表单数据
+            form = AgendaForm(data)
+
+            # 验证表单
+            if form.is_valid():
+                form.save()
+                return JsonResponse({'message': 'Agenda imported successfully.'}, status=201)
+
+            # 如果表单无效，返回错误信息
+            return JsonResponse({'errors': form.errors}, status=402)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+
+    # 处理其他请求方式（如 GET）时可以返回一个空表单
+    form = AgendaForm()
     return render(request, 'agenda/add_agenda.html', {'form': form})
 
 @csrf_protect

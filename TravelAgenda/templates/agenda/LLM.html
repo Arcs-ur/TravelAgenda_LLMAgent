@@ -143,6 +143,11 @@
     document.getElementById('saveItinerary').addEventListener('click', async function(){
         const destination = document.getElementById('destination').value;
         const itineraryItems = Array.from(document.querySelectorAll('#itineraryList .list-group-item')).map(item => item);
+        console.log(itineraryItems);
+        const output = document.createElement('div');
+        output.innerText = JSON.stringify(itineraryItems, null, 2); // 格式化为可读的字符串
+        document.body.appendChild(output); // 添加到页面的末尾
+
         if (itineraryItems === '') {
             alert('请先生成日程！');
             return;
@@ -155,11 +160,13 @@
                     'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
                 },
                 body: JSON.stringify({
-                    'departure_location': '温州南站',
-                    'departure_time': '2024-11-03 13:00',
-                    'arrival_location': '上海虹桥站',
-                    'arrival_time': '2024-11-03 16:30',
-                    'commute_info': '乘坐G7510次高铁，全程约3小时30分钟。'
+                    // csrfmiddlewaretoken:"po0o7IGFiAvObcXxm9tG1w705N7DlW9NYu1uRh05RXaktUcWlF77OkNL5mMS7NDI",
+                    agenda:"4",
+                    departure_location:"28",
+                    arrival_location:"174",
+                    departure_time:"2024-11-04T12:42",
+                    arrival_time:"2024-11-04T14:53",
+                    commute_info:"G7642"
                 })
             });
 
