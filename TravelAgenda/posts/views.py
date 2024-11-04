@@ -76,6 +76,7 @@ class PostSendView(LoginRequiredMixin, CreateView):
     def form_invalid(self, form, errors=None):
         context = self.get_context_data(form=form)
         if errors:
+            print("Form errors:", form.errors)
             form.errors.update(errors)
         return self.render_to_response(context)
     

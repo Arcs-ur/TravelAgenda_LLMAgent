@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from posts.models import Post
+from posts.models import Post, Image, Comment
 import uuid
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -62,8 +62,6 @@ class MyPostListViewTests(TestCase):
         # 确认搜索结果包含 "User1 Post 1" 关键字
         self.assertTrue(all('User1 Post 1' in post.title for post in posts))
 
-
-
 class PostListViewTests(TestCase):
     def setUp(self):
         # 创建一个用户并登录
@@ -110,46 +108,98 @@ class PostListViewTests(TestCase):
         # 确认搜索结果包含 "Test Post 1" 关键字
         self.assertTrue(all('Test Post 1' in post.title for post in posts))
 
-class PostSendViewTests(TestCase):
+class MyPostDetailViewTests(TestCase):
     def setUp(self):
-        # 创建用户并登录
-        self.user = get_user_model().objects.create_user(username='testuser', password='testpass')
-        self.client.login(username='testuser', password='testpass')
+        User = get_user_model()
+        # Create a user and log them in
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
 
-    def test_post_send_success(self):
-        # 测试表单提交成功的情况
-        image = SimpleUploadedFile("test_image.jpg", b"file_content", content_type="image/jpeg")
-        response = self.client.post(reverse('posts:send'), {
-            'title': 'Test Post Title',
-            'content': 'This is a test post content 13241244314324',
-            'images': [image]  # 模拟上传图片
-        })
+        # Create a post and comments
+        self.post = Post.objects.create(user=self.user, title='Test Post', content='Test content')
+        for i in range(25):
+            Comment.objects.create(post=self.post, user=self.user, content=f'Comment {i}')
 
-        # 验证是否重定向到 'my_post'
-        self.assertRedirects(response, reverse('posts:my_post'))
+        self.url = reverse('posts:mypost_detail', kwargs={'pk': self.post.id})
 
-        # 验证帖子是否创建成功，并关联到当前用户
-        post = Post.objects.get(title='Test Post Title')
-        self.assertEqual(post.user, self.user)
-        self.assertEqual(post.content, 'This is a test post content')
-        self.assertEqual(post.images.count(), 1)  # 确认图片已上传
+    def test_access_by_logged_in_user(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'posts/mypost_detail.html')
 
-    def test_post_send_invalid_form(self):
-        response = self.client.post(reverse('posts:send'), {
-            'title': '',  # 标题为空
-            'content': ''
-        })
-
-        # 直接检查表单错误而不是使用 assertFormError
-        form = response.context['form']
-        self.assertIn('title', form.errors)
-        self.assertIn('content', form.errors)
-
-
-    def test_post_send_view_requires_login(self):
-        # 注销用户
+    def test_access_by_anonymous_user(self):
         self.client.logout()
+        response = self.client.get(self.url)
+        self.assertRedirects(response, f'/accounts/login/?next={self.url}')
 
-        # 尝试访问页面，验证重定向到登录页面
-        response = self.client.get(reverse('posts:send'))
-        self.assertRedirects(response, f"{reverse('accounts:login')}?next={reverse('posts:send')}")
+    def test_context_data(self):
+        response = self.client.get(self.url)
+        self.assertIn('post', response.context)
+        self.assertIn('images', response.context)
+        self.assertIn('comments', response.context)
+        self.assertEqual(len(response.context['comments']), 10)  # Paginated, so only 10
+
+class PostDetailViewTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        # Create a user and log them in
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+        # Create a post and comments
+        self.post = Post.objects.create(user=self.user, title='Test Post', content='Test content')
+        self.image = Image.objects.create(post=self.post, image=SimpleUploadedFile("test.jpg", b"file_content"))
+        for i in range(25):
+            Comment.objects.create(post=self.post, user=self.user, content=f'Comment {i}')
+
+        self.url = reverse('posts:post_detail', kwargs={'pk': self.post.id})
+
+    def test_access_by_logged_in_user(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'posts/post_detail.html')
+
+    def test_access_by_anonymous_user(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertRedirects(response, f'/accounts/login/?next={self.url}')
+
+    def test_context_data(self):
+        response = self.client.get(self.url)
+        self.assertIn('post', response.context)
+        self.assertIn('images', response.context)
+        self.assertIn('comments', response.context)
+        self.assertIn('form', response.context)
+        self.assertEqual(len(response.context['comments']), 10)  # Paginated, so only 10
+
+class CommentCreateViewTests(TestCase):
+    def setUp(self):
+        # Create a user and log them in
+        User = get_user_model()
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+        # Create a post
+        self.post = Post.objects.create(user=self.user, title='Test Post', content='Test content')
+        self.url = reverse('posts:add_comment', kwargs={'pk': self.post.id})
+
+    def test_create_comment(self):
+        response = self.client.post(self.url, {'content': 'New comment'})
+        self.assertEqual(response.status_code, 302)  # Redirect after success
+        self.assertEqual(Comment.objects.count(), 1)
+        self.assertEqual(Comment.objects.first().content, 'New comment')
+
+    def test_create_reply_comment(self):
+        parent_comment = Comment.objects.create(post=self.post, user=self.user, content='Parent comment')
+        response = self.client.post(self.url, {
+            'content': 'Reply comment',
+            'parent_id': parent_comment.id
+        })
+        self.assertEqual(response.status_code, 302)  # Redirect after success
+        self.assertEqual(Comment.objects.count(), 2)
+        self.assertEqual(Comment.objects.last().parent, parent_comment)
+
+    def test_access_by_anonymous_user(self):
+        self.client.logout()
+        response = self.client.post(self.url, {'content': 'Anonymous comment'})
+        self.assertRedirects(response, f'/accounts/login/?next={self.url}')
