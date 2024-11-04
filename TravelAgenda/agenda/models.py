@@ -35,3 +35,15 @@ class AgendaLocation(models.Model):
 
     def __str__(self):
         return f"{self.agenda.title}: {self.departure_location} to {self.arrival_location}"
+
+    def calculate_progress(self):
+        now = timezone.now()
+        if now < self.departure_time:
+            return 0  # 任务尚未开始
+        elif now > self.arrival_time:
+            return 100  # 任务已完成
+        else:
+            # 计算任务进度
+            total_duration = (self.arrival_time - self.departure_time).total_seconds()
+            elapsed_time = (now - self.departure_time).total_seconds()
+            return min(int((elapsed_time / total_duration) * 100), 100)  # 限制在0-100之间

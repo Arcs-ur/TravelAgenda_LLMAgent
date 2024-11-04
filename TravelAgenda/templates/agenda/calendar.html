@@ -2,32 +2,34 @@
 
 {% load static %}
 {% block title %}Your Calendar{% endblock %}
-
+{% block trace %}
+<div class="container-fluid px-4">
+  <nav aria-label="breadcrumb">
+      <ol class="breadcrumb my-0">
+          <li class="breadcrumb-item"><span>Home</span></li>
+          <li class="breadcrumb-item"><span>Agenda</span></li>
+          <li class="breadcrumb-item active"><span>Calendar</span></li>
+      </ol>
+  </nav>
+</div>
+{% endblock %}
 {% block content %}
-<!DOCTYPE html>
-<html lang='en'>
+
+{% comment %} <html lang='en'>
 <head>
     <meta charset='utf-8' />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.min.css' rel='stylesheet' />
-    <script src="{% static 'vendors/fullcalendar/js/index.global.min.js' %}"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.min.css' rel='stylesheet' />{% endcomment %}
+    <script src="{% static 'vendors/fullcalendar/js/index.global.min.js' %}"></script> 
     <style>
         #calendar {
             max-width: 900px;
             margin: 40px auto;
         }
     </style>
-</head>
+
 <body>
-    <div class="container-fluid px-4">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb my-0">
-                <li class="breadcrumb-item"><span>Home</span></li>
-                <li class="breadcrumb-item"><span>Agenda</span></li>
-                <li class="breadcrumb-item active"><span>Calendar</span></li>
-            </ol>
-        </nav>
-    </div>
+    
     <div class="body flex-grow-1">
         <div class="container-lg px-4">
           <div class="card mb-4">
