@@ -14,14 +14,16 @@
 {% block content %}
 <div>
 <h1>Agenda List</h1>
-{% if agendas %}
-    <ul>
-        {% for agenda in agendas %}
-            <li>{{ agenda.title }}</li>  
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No agendas available.</p>
-{% endif %}
+<div id="agenda-list">
+    {% if agendas %}
+        <ul>
+            {% for agenda in agendas %}
+                <li>{{ agenda.title }}</li>  
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No agendas available.</p>
+    {% endif %}
+    
 </div>
 {% endblock %} 

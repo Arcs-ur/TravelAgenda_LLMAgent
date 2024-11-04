@@ -339,3 +339,9 @@ class AgendaListView(LoginRequiredMixin, ListView):
 
         # 返回符合条件的 agenda
             return queryset
+        
+@csrf_protect
+@login_required
+def dashboard(request):
+    agendas = Agenda.objects.all()
+    return render(request, 'dashboard.html', {'agendas': agendas})
