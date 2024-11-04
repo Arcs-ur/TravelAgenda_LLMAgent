@@ -408,10 +408,10 @@
                               <span data-coreui-i18n="tasks">Tasks</span>
                               <span class="badge badge-sm bg-danger-gradient ms-2">42</span>
                             </a>
-                            <a class="dropdown-item" href="/comments">
+                            <a class="dropdown-item" href="{% url 'posts:my_post' %}">
                               <i class="bi bi-chat-square-text me-2"></i>
                               <span data-coreui-i18n="comments">Comments</span>
-                              <span class="badge badge-sm bg-warning-gradient ms-2">42</span>
+                              <span class="badge badge-sm bg-warning-gradient ms-2">all</span>
                             </a>
                             <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2" data-coreui-i18n="settings">Settings</div>
                             <a class="dropdown-item" href="/accounts/profile">
@@ -426,10 +426,7 @@
                             </a>
                            
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/lock-account">
-                              <i class="bi bi-lock me-2"></i>
-                              <span data-coreui-i18n="lockAccount">Lock Account</span>
-                            </a>
+                         
                             <a class="dropdown-item" href="{% url 'accounts:logout' %}">
                               <i class="bi bi-box-arrow-right me-2"></i>
                               <span data-coreui-i18n="logout">Logout</span>
