@@ -12,4 +12,6 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),#个人资料页面
     path('settings/', views.settings_view, name='settings'),
     path('settings/change_password/', views.change_password, name='change_password'),
+    path('logout/', views.logout_view, name='logout'),
+
 ]
