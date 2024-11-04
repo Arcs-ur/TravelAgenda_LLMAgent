@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'destinations',
     'dashboard',
     'posts',
-    'rest_framework'
+    'rest_framework',
+    'notifications'
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'notifications.context_processors.unread_notification_count',  
+                'notifications.context_processors.message_processor',
             ],
         },
     },
@@ -114,11 +117,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'  # Set to Shanghai time
 
 USE_I18N = True
 
 USE_TZ = True
+
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 # Static files (CSS, JavaScript, Images)
@@ -134,6 +138,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+LOGIN_URL = '/accounts/login/'  # 替换为你的登录URL
+LOGOUT_REDIRECT_URL = '/accounts/login/'  # 登出后重定向到登录页面
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'
@@ -142,9 +148,9 @@ EMAIL_HOST_USER = 'h1185038823@163.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
 
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SECURE = True
-
+SECURE_CROSS_ORIGIN_OPENER_POLICY=None
+SESSION_COOKIE_SECURE=False
+SESSION_COOKIE_HTTPONLY = True
 # CSP_DEFAULT_SRC = ["'self'"]
 # CSP_SCRIPT_SRC = ["'self'"]
 # CSP_STYLE_SRC = ["'self'"]

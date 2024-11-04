@@ -91,10 +91,13 @@ def forgot_password_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         if email:
-            send_verification_code(email)
-            request.session['verified_email'] = email  # 这里要确保邮箱被存储
-            messages.success(request, '验证码已发送，请检查您的邮箱。')
-            return redirect('accounts:verify_code')  # 重定向到验证码验证页面
+            if CustomUser.objects.filter(email=email).exists():
+                send_verification_code(email)
+                request.session['verified_email'] = email  # 确保邮箱被存储
+                messages.success(request, '验证码已发送，请检查您的邮箱。')
+                return redirect('accounts:verify_code')  # 重定向到验证码验证页面
+            else:
+                messages.error(request, '该邮箱未注册。')
         else:
             messages.error(request, '请输入有效的邮箱地址。')
     return render(request, 'accounts/forgot_password.html')
