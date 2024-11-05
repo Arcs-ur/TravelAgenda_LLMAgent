@@ -3,10 +3,10 @@ from .models import Agenda, Location, AgendaLocation
 from django_select2.forms import Select2Widget
 
 class AgendaForm(forms.ModelForm):
-    # 通过字段添加与 `AgendaLocation` 相关的内容
- 
-    departure_location = forms.ModelChoiceField(queryset=Location.objects.all(), label="出发地",widget=Select2Widget)
-    arrival_location = forms.ModelChoiceField(queryset=Location.objects.all(), label="目的地",widget=Select2Widget)
+    # departure_location = forms.ModelChoiceField(queryset=Location.objects.all(), label="出发地",widget=Select2Widget)
+    # arrival_location = forms.ModelChoiceField(queryset=Location.objects.all(), label="目的地",widget=Select2Widget)
+    departure_location = forms.CharField(label="出发地", widget=forms.TextInput(attrs={'placeholder': '请输入出发地'}))
+    arrival_location = forms.CharField(label="目的地", widget=forms.TextInput(attrs={'placeholder': '请输入目的地'}))
     departure_time = forms.DateTimeField(label="出发时间", widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
     arrival_time = forms.DateTimeField(label="到达时间", widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
     commute_info = forms.CharField(widget=forms.Textarea, label="通勤信息")

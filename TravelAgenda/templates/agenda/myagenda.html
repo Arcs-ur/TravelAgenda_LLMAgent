@@ -18,10 +18,9 @@
 <div class="body flex-grow-1">
     <div class="container-lg px-4">
         <!-- 按钮和搜索框放在同一行 -->
-        <p>旅行计划比如“Beijing Trip”,行程是里面的具体去哪玩之类的</p>
         <div class="mb-3 d-flex align-items-center">
-            <a href="{% url 'agenda:add_Travelagenda' %}" class="btn btn-primary me-2">添加旅行计划</a>
             <a href="{% url 'agenda:add_agenda' %}" class="btn btn-primary me-2">添加行程</a>
+            <a href="{% url 'agenda:add_Travelagenda' %}" class="btn btn-primary me-2">添加旅行计划</a>
             <form class="d-flex" method="get" action="{% url 'agenda:agenda_find' %}">
                 {% csrf_token %}
                 <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ request.GET.q }}">
@@ -51,7 +50,7 @@
                                     <th scope="row">{{ forloop.parentloop.counter }}</th>
                                     <th scope="row">{{ loc.parentloop.counter }}</th>
                                     <td>{{ agenda.title }}</td>
-                                    <td>{{ loc.departure_location.name }} to {{ loc.arrival_location.name }} <br></td>
+                                    <td>{{ loc.departure_location }} to {{ loc.arrival_location }} <br></td>
                                     <td>{{ loc.departure_time }} to {{ loc.arrival_time }}</td>
                                     <td>By {{ loc.commute_info }}</td>
                                     <td>

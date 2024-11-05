@@ -10,5 +10,5 @@ def unread_notification_count(request):
 def message_processor(request):
     if request.user.is_authenticated:
         messages = Notification.objects.filter(user=request.user,is_read=False).order_by('-created_at')  # 获取所有消息
-        return {'messages': messages}
-    return {'messages': []}  # 未认证用户返回空列表
+        return {'ms': messages}
+    return {'ms': []}  # 未认证用户返回空列表

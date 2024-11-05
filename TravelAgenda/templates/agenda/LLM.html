@@ -129,8 +129,7 @@
 
             const data = await response.json(); // 将响应解析为JSON
             itinerary = data.result; // 从JSON中提取结果
-       
-
+            alert(itinerary);
             // 显示结果
             document.getElementById('itineraryList').innerHTML = itinerary.split('\n').map(item => `<li class="list-group-item">${item}</li>`).join('');
             document.getElementById('itineraryResult').style.display = 'block';
@@ -142,9 +141,10 @@
         
     document.getElementById('saveItinerary').addEventListener('click', async function(){
         const destination = document.getElementById('destination').value;
-        const itineraryItems = Array.from(document.querySelectorAll('#itineraryList .list-group-item')).map(item => item);
-        console.log(itineraryItems);
+        const itineraryItems = Array.from(document.querySelectorAll('#itineraryList .list-group-item')).map(item => item.innerText);
+      
         const output = document.createElement('div');
+        const trans = itineraryItems
         output.innerText = JSON.stringify(itineraryItems, null, 2); // 格式化为可读的字符串
         document.body.appendChild(output); // 添加到页面的末尾
 
@@ -152,6 +152,7 @@
             alert('请先生成日程！');
             return;
         }
+        alert(trans)
         try {
             const response = await fetch('agendas/import/', {
                 method: 'POST',
@@ -160,13 +161,8 @@
                     'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
                 },
                 body: JSON.stringify({
-                    // csrfmiddlewaretoken:"po0o7IGFiAvObcXxm9tG1w705N7DlW9NYu1uRh05RXaktUcWlF77OkNL5mMS7NDI",
-                    agenda:"4",
-                    departure_location:"28",
-                    arrival_location:"174",
-                    departure_time:"2024-11-04T12:42",
-                    arrival_time:"2024-11-04T14:53",
-                    commute_info:"G7642"
+                    'itinerary': trans ,
+                    'agenda':`${destination} Trip`
                 })
             });
 
@@ -175,20 +171,20 @@
             }
             
             // 保存日程名称到 agendas/addtrip
-            const tripNameResponse = await fetch('agendas/addtrip/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
-                },
-                body: JSON.stringify({
-                    'title': `${destination} Trip`
-                })
-            });
+            // const tripNameResponse = await fetch('agendas/addtrip/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-CSRFToken': '{{ csrf_token }}'  // 发送CSRF令牌
+            //     },
+            //     body: JSON.stringify({
+            //         'title': `${destination} Trip`
+            //     })
+            // });
 
-            if (!tripNameResponse.ok) {
-                throw new Error('保存日程名称失败');
-            }
+            // if (!tripNameResponse.ok) {
+            //     throw new Error('保存日程名称失败');
+            // }
             else{
                 alert('日程保存成功！');
             }

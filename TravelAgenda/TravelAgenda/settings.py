@@ -74,6 +74,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.unread_notification_count',  
                 'notifications.context_processors.message_processor',
+                'agenda.context_processors.agenda_data',
             ],
         },
     },

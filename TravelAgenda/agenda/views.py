@@ -127,27 +127,75 @@ def add_agenda(request):
 
 def import_agenda(request):
     if request.method == 'POST':
+        data = json.loads(request.body)
+        print("hello",data)
+        agenda_title = data.get('agenda')
+        agenda_instance = Agenda.objects.create(title = agenda_title)
+        itinerary_str = data.get('itinerary')
+
+        itinerary_str = '\'' + str(itinerary_str) + '\''
+        print("hi",itinerary_str)
         try:
-            # 从请求体中解析 JSON 数据
-            data = json.loads(request.body)
-
-            # 将 JSON 数据转为表单数据
-            form = AgendaForm(data)
-
-            # 验证表单
-            if form.is_valid():
-                form.save()
-                return JsonResponse({'message': 'Agenda imported successfully.'}, status=201)
-
-            # 如果表单无效，返回错误信息
-            return JsonResponse({'errors': form.errors}, status=402)
-
+            # 将 itinerary 字符串解析为 Python 对象
+            cleaned_text = itinerary_str.replace(" ", "").replace('```json', '').replace('```', '').replace('\\\"', '\"').replace('\'', '').replace('\"[', '[').replace(']\"', ']').replace('[,"', '[').replace('{,"', '{"').replace(',,', ',').replace(',]', ']')
+            #cleaned_text = cleaned_text.replace(',]', ']').replace(" ", "").replace('```json', '').replace('```', '').replace('\\\"', '\"').replace('\'', '').replace('\"[', '[').replace(']\"', ']').replace('[,"', '[').replace(',"', "\"").replace(',,', ',')
+            cleaned_text = cleaned_text.replace(',}', "}").replace('[,', "[").replace("},", "},").replace("],", "],")
+            print(cleaned_text)
+            itinerary = json.loads(cleaned_text)
+            
+            for day_info in itinerary:  # 遍历列表中的第一个字典
+                for day, items in day_info.items():  # 遍历字典中的每一天
+                    for item in items:  # 遍历每一天的行程
+                        departure_location_name = item.get('departure_location')
+                        arrival_location_name = item.get('arrival_location')
+                        departure_time = item.get('departure_time')
+                        arrival_time = item.get('arrival_time')
+                        commute_info = item.get('commute_info')
+                        parsed_arrival_time = datetime.strptime(arrival_time, '%Y-%m-%d%H:%M')
+                        formatted_arr_time = parsed_arrival_time.strftime('%Y-%m-%d %H:%M')
+                        parsed_dep_time = datetime.strptime(departure_time, '%Y-%m-%d%H:%M')
+                        formatted_dep_time = parsed_dep_time.strftime('%Y-%m-%d %H:%M')
+            # 检查出发地和目的地是否存在
+                        if departure_location_name and arrival_location_name:
+                            AgendaLocation.objects.create(
+                                agenda=agenda_instance,
+                                departure_location=departure_location_name,
+                                arrival_location=arrival_location_name,
+                                departure_time=formatted_dep_time,
+                                arrival_time=formatted_arr_time,
+                                commute_info=commute_info
+                            )
+                        else:
+                            return JsonResponse({'success': False, 'error': '地点不存在'}, status=400)
+            
+            return JsonResponse({'success': True})
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+            return JsonResponse({'success': False, 'error': '无效的日程格式'}, status=400)
 
-    # 处理其他请求方式（如 GET）时可以返回一个空表单
-    form = AgendaForm()
-    return render(request, 'agenda/add_agenda.html', {'form': form})
+    return JsonResponse({'success': False, 'error': '请求方式不正确'}, status=400)
+# def import_agenda(request):
+#     if request.method == 'POST':
+#         try:
+#             # 从请求体中解析 JSON 数据
+#             data = json.loads(request.body)
+
+#             # 将 JSON 数据转为表单数据
+#             form = AgendaForm(data)
+
+#             # 验证表单
+#             if form.is_valid():
+#                 form.save()
+#                 return JsonResponse({'message': 'Agenda imported successfully.'}, status=201)
+
+#             # 如果表单无效，返回错误信息
+#             return JsonResponse({'errors': form.errors}, status=402)
+
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+
+#     # 处理其他请求方式（如 GET）时可以返回一个空表单
+#     form = AgendaForm()
+#     return render(request, 'agenda/add_agenda.html', {'form': form})
 
 @csrf_protect
 @login_required
@@ -176,11 +224,11 @@ def calendar_view(request):
     events = []
     for agendalocation in agendalocations:
         events.append(({
-            "title":f"{agendalocation.departure_location.name} - {agendalocation.arrival_location.name}",
+            "title":f"{agendalocation.departure_location} - {agendalocation.arrival_location}",
             "start":agendalocation.departure_time.isoformat(),
             "end":agendalocation.arrival_time.isoformat(),  # 事件结束时间, 假设为到达时间2小时后
-            "departure_location":agendalocation.departure_location.name,
-            "arrive_location":agendalocation.arrival_location.name,
+            "departure_location":agendalocation.departure_location,
+            "arrive_location":agendalocation.arrival_location,
             "transportation":agendalocation.commute_info,
             }
         ))
@@ -265,7 +313,8 @@ def call_api(request):
             'model': 'generalv3.5',  # 指定请求的模型
             'messages': [
                 {
-                    'role':'system','content':'你是一个严格按照格式来生成内容的人。禁止生成任何的“\”符号！！！！！禁止生成任何的换行符！！！！！需要根据给出的地点，时间等信息来给出一份旅游攻略，其中涉及到的地点、交通方式、时间、酒店、饭店等信息必须准确详细。每一份旅游计划内部的小行程，应当按照<departure_location:xxx><departure_time:xxx><arrival_location><arrival_time><commute_info:xxx>来严格输出，并组织成json格式，输出是去除开头的```json和结尾的```。此外我要求，涉及到地点的必须具体，不能模糊只出现城市名，应当写出具体的站名。酒店饭店等也需要在行程中体现，而不是单独的出现。涉及到交通方式应当写出具体的班次和时间。一个景点不应反复出现。用中文回答'
+                    'role':'system','content':'你是一个严格按照格式来生成内容的人。禁止生成任何的“\”符号！！！！！禁止生成任何的换行符！！！！！需要根据给出的地点，时间等信息来给出一份旅游攻略，其中涉及到的地点、交通方式、时间、酒店、饭店等信息必须准确详细。每一份旅游计划内部的小行程，应当按照<departure_location:xxx><departure_time:xxx><arrival_location><arrival_time><commute_info:xxx>来严格输出，并组织成json格式，输出是去除开头的```json和结尾的```。此外我要求，涉及到地点的必须具体，不能模糊只出现城市名，应当写出具体的站名。酒店饭店等也需要在行程中体现，json文件格式为day_0，day_1，day_2，……，每一天中的每一个元素组均由<departure_location:xxx><departure_time:xxx><arrival_location><arrival_time><commute_info:xxx>来严格输出。而不是单独的出现。涉及到交通方式应当写出具体的班次和时间。一个景点不应反复出现。用中文回答。'
+                    
                 },
                 {
                     'role':'user','content': prompt

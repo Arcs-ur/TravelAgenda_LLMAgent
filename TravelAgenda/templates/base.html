@@ -224,7 +224,7 @@
                         <li class="nav-item"><a class="nav-link" href="#" data-coreui-i18n="settings">Settings</a></li>
                     </ul>
                     <ul class="header-nav d-none d-md-flex ms-auto">
-                        <li class="nav-item dropdown">
+                        {% comment %} <li class="nav-item dropdown">
                             <a class="nav-link" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                 <i class="bi bi-bell icon-lg my-1 mx-2"></i>
                                 <span class="badge rounded-pill position-absolute top-0 end-0 bg-danger-gradient">5</span>
@@ -249,44 +249,36 @@
                                 </a>
                                 <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2" data-coreui-i18n="server">Server</div>
                             </div>
-                        </li>
+                        </li> {% endcomment %}
                         
                         <li class="nav-item dropdown">
                             <a class="nav-link" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                 <i class="bi bi-list-check icon-lg my-1 mx-2" style="font-size: 1.2rem;"></i>
-                                <span class="badge rounded-pill position-absolute top-0 end-0 bg-warning-gradient">5</span>
+                                <span class="badge rounded-pill position-absolute top-0 end-0 bg-warning-gradient">{{ total_locations }}</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg pt-0">
-                                <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2" data-coreui-i18n="taskCounter, { 'counter': 5 }">You have 5 pending tasks</div>
+                                <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2" data-coreui-i18n="taskCounter, { 'counter': 5 }">You have {{ total_locations }} pending tasks</div>
+                                {% for location in top_three_locations %}
                                 <a class="dropdown-item d-block py-2" href="#">
                                     <div class="d-flex justify-content-between mb-1">
-                                        <div class="small">Upgrade NPM</div>
-                                        <div class="fw-semibold">0%</div>
+                                        <div class="small">{{ location.departure_location }} to {{ location.arrival_location }}</div>
+                                        <div class="fw-semibold">{{ location.progress }}%</div>
                                     </div>
                                     <div class="progress progress-thin">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar 
+                                            {% if location.progress == 100 %}bg-success{% elif location.progress >= 50 %}bg-warning{% else %}bg-info{% endif %}" 
+                                            role="progressbar" 
+                                            style="width: {{ location.progress }}%" 
+                                            aria-valuenow="{{ location.progress }}" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
                                     </div>
                                 </a>
-                                <a class="dropdown-item d-block py-2" href="#">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <div class="small">VueJS Version</div>
-                                        <div class="fw-semibold">50%</div>
-                                    </div>
-                                    <span class="progress progress-thin">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </span>
-                                </a>
-                                <a class="dropdown-item d-block py-2" href="#">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <div class="small">Angular Version</div>
-                                        <div class="fw-semibold">100%</div>
-                                    </div>
-                                    <span class="progress progress-thin">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </span>
-                                </a>
+                            {% endfor %}
+                            
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-center fw-semibold" href="#" data-coreui-i18n="viewAllTasks">View all tasks</a>
+                                <a class="dropdown-item text-center fw-semibold" href="{% url 'agenda:calendar' %}" data-coreui-i18n="viewAllTasks">View all tasks</a>
                             </div>
                         </li>
                     
@@ -297,7 +289,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-md pt-0" style="min-width: 24rem">
                                 <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2" data-coreui-i18n="messagesCounter, { 'counter': 7 }">You have {{ unread_count }} messages</div>
-                                {% for notification in messages|slice:":3" %}
+                                {% for notification in ms|slice:":3" %}
                             <a class="dropdown-item" href="{% url 'notifications:view_notifications' %}">
                                 <div class="d-flex">
                                     <div class="avatar flex-shrink-0 my-3 me-3">
@@ -403,15 +395,15 @@
                               <span class="badge badge-sm bg-success ms-2">{{ unread_count }}</span>
 
                             </a>
-                            <a class="dropdown-item" href="/tasks">
+                            <a class="dropdown-item" href="/agenda/myagenda">
                               <i class="bi bi-list-task me-2"></i>
                               <span data-coreui-i18n="tasks">Tasks</span>
-                              <span class="badge badge-sm bg-danger-gradient ms-2">42</span>
+                              <span class="badge badge-sm bg-danger-gradient ms-2">{{ total_locations }}</span>
                             </a>
-                            <a class="dropdown-item" href="{% url 'posts:my_post' %}">
+                            <a class="dropdown-item" href="/posts/list">
                               <i class="bi bi-chat-square-text me-2"></i>
-                              <span data-coreui-i18n="comments">Comments</span>
-                              <span class="badge badge-sm bg-warning-gradient ms-2">all</span>
+                              <span data-coreui-i18n="comments">Posts</span>
+                              <span class="badge badge-sm bg-warning-gradient ms-2">ALL</span>
                             </a>
                             <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2" data-coreui-i18n="settings">Settings</div>
                             <a class="dropdown-item" href="/accounts/profile">
@@ -426,7 +418,10 @@
                             </a>
                            
                             <div class="dropdown-divider"></div>
-                         
+                            <a class="dropdown-item" href="/lock-account">
+                              <i class="bi bi-lock me-2"></i>
+                              <span data-coreui-i18n="lockAccount">Lock Account</span>
+                            </a>
                             <a class="dropdown-item" href="{% url 'accounts:logout' %}">
                               <i class="bi bi-box-arrow-right me-2"></i>
                               <span data-coreui-i18n="logout">Logout</span>
