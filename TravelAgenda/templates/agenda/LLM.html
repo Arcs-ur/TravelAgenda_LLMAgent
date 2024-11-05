@@ -126,10 +126,12 @@
             if (!response.ok) {
                 throw new Error('网络响应不正常');
             }
+            else{
+                alert('正在生成哦~')
+            }
 
             const data = await response.json(); // 将响应解析为JSON
             itinerary = data.result; // 从JSON中提取结果
-            alert(itinerary);
             // 显示结果
             document.getElementById('itineraryList').innerHTML = itinerary.split('\n').map(item => `<li class="list-group-item">${item}</li>`).join('');
             document.getElementById('itineraryResult').style.display = 'block';
@@ -152,7 +154,6 @@
             alert('请先生成日程！');
             return;
         }
-        alert(trans)
         try {
             const response = await fetch('agendas/import/', {
                 method: 'POST',
