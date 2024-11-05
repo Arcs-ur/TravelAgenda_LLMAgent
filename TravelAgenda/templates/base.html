@@ -259,7 +259,7 @@
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg pt-0">
                                 <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2" data-coreui-i18n="taskCounter, { 'counter': 5 }">You have {{ total_locations }} pending tasks</div>
                                 {% for location in top_three_locations %}
-                                <a class="dropdown-item d-block py-2" href="#">
+                                <a class="dropdown-item d-block py-2" href="{% url 'agenda:calendar' %}">
                                     <div class="d-flex justify-content-between mb-1">
                                         <div class="small">{{ location.departure_location }} to {{ location.arrival_location }}</div>
                                         <div class="fw-semibold">{{ location.progress }}%</div>
