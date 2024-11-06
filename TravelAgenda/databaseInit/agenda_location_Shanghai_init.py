@@ -110,5 +110,5 @@ locations = [
 # 执行批量插入
 Location.objects.bulk_create(locations)
 
-print("Location地点数据已成功插入！")
+# print("Location地点数据已成功插入！")
 

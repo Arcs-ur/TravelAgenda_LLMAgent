@@ -293,11 +293,11 @@ def call_api(request):
                 text_content += f"名称: {play_destination.name}, 地址: {play_destination.address}\n"
             text_content += "\n"
             
-        with open('destination_knowledge_base.txt', 'w', encoding='utf-8') as file:
-            file.write(text_content)
+        # with open('destination_knowledge_base.txt', 'w', encoding='utf-8') as file:
+        #     file.write(text_content)
         
-        with open('destination_knowledge_base.txt', 'r', encoding='utf-8') as file:
-            knowledge_base = file.read()
+        # with open('destination_knowledge_base.txt', 'r', encoding='utf-8') as file:
+        #     knowledge_base = file.read()
         #2024.11.01到2024.11.02，预计从温州出发，到南京游玩，我很想去中山陵，我的酒店预算每天在200~400元。
         prompt = (
 
