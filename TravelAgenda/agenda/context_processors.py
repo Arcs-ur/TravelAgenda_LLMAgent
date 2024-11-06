@@ -2,6 +2,13 @@ from django.utils import timezone
 from .models import AgendaLocation
 
 def agenda_data(request):
+    # 确保用户已登录
+    if not request.user.is_authenticated:
+        return {
+            'total_locations': 0,
+            'top_three_locations': [],
+        }
+
     # 只获取当前用户的 AgendaLocation
     total_locations = AgendaLocation.objects.filter(agenda__user=request.user).count()
     top_three_locations = AgendaLocation.objects.filter(agenda__user=request.user).order_by('-created_at')[:3]
