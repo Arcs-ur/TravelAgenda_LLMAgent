@@ -351,8 +351,8 @@ def call_api(request):
             
         )
 
-        # api_key = config('OPENAI_API_KEY')
-        api_key = "sk-lAb9EWqHEAhBQ1aBic8j9VSd0ic9znCaXrj6DbFaFfAzC47u"
+        api_key = config('OPENAI_API_KEY')
+        
         base_url = "https://40.chatgptsb.net/v1"
         client = OpenAI(api_key=api_key, base_url=base_url)
         try:
