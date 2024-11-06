@@ -16,13 +16,25 @@ from decouple import config
 from destinations.models import Destination
 from django.contrib.auth.decorators import login_required
 from openai import OpenAI
-
+from django.utils import timezone
+from datetime import timedelta
 @csrf_protect
 @login_required
 def agenda_main(request):
-    # 只获取当前用户的 Agenda 实例
-    agendas = Agenda.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'agenda/main.html', {'agendas': agendas})
+    # 当前时间
+    now = timezone.now()
+    # 计算一周后的时间
+    one_week_later = now + timedelta(days=7)
+
+    # 获取一周内的 AgendaLocation 实例，并限制最多 20 条
+    agendas = AgendaLocation.objects.filter(
+        agenda__user=request.user,
+        departure_time__lte=one_week_later,
+        departure_time__gte=now
+    ).order_by('-created_at')[:20]
+    print(agendas)
+    return render(request, 'dashboard.html', {'agendas': agendas})
+
 @csrf_protect
 @login_required
 def agenda_calendar(request):

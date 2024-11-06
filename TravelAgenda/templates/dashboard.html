@@ -2,7 +2,6 @@
 
 {% block title %}Dashboard{% endblock %}
 
-
 {% block trace %}
 <div class="container-fluid px-4">
     <nav aria-label="breadcrumb">
@@ -13,28 +12,60 @@
     </nav>
 </div>
 {% endblock %}
+
 {% block content %}
 <div class="body flex-grow-1">
     <div class="container-lg px-4">
-        <h2>Dashboard</h2>
-        <p>欢迎来到旅游日程规划平台</p>
-        
+        <h2>我的行程</h2>
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                       
+                        <th class="bg-body-secondary">出发地</th>
+                        <th class="bg-body-secondary">目的地</th>
+                        <th class="bg-body-secondary text-center">出发时间</th>
+                     
+                      
+                        <th class="bg-body-secondary text-center">进度</th>
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for agenda in agendas %}
+                    <tr>
+                       
+                        <td>{{ agenda.departure_location }}</td>
+                        <td>{{ agenda.arrival_location }}</td>
+                        <td class="text-center">{{ agenda.departure_time }}</td>
+                     
+                      
+                        <td class="text-center">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ agenda.calculate_progress }}%;" 
+                                     aria-valuenow="{{ agenda.calculate_progress }}" 
+                                     aria-valuemin="0" aria-valuemax="100">
+                                    {{ agenda.calculate_progress }}%
+                                </div>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">您未来一周内没有任何行程计划。</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <div class="mb-4">
             <h4>添加新的日程</h4>
             <a href="/agenda/agendas/addtrip" class="btn btn-info mt-2">添加日程</a>
         </div>
-
-        <h4>你的日程</h4>
-        <div id="agenda-container">
-            <!-- 日程列表将通过 AJAX 加载到这里 -->
-        </div>
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $("#agenda-container").load("{% url 'agenda:main' %} #agenda-list");
-    });
-</script>
 {% endblock %}
