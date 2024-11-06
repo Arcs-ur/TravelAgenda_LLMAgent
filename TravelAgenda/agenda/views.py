@@ -41,13 +41,15 @@ def agenda_LLM(request):
 @csrf_protect
 @login_required
 def agenda_my(request):
-    agendas = Agenda.objects.all()
+    agendas = Agenda.objects.filter(user=request.user)
+
     return render(request, 'agenda/myagenda.html', {'agendas': agendas})
 
 @csrf_protect
 @login_required
 def agenda_list(request):
-    agendas = Agenda.objects.all()
+    agendas = Agenda.objects.filter(user=request.user)
+
     return render(request, 'agenda/agenda_list.html', {'agendas': agendas})
 
 @csrf_protect
@@ -492,6 +494,7 @@ class AgendaListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # 确保获取的 queryset 仅包含当前用户的记录
         queryset = super().get_queryset().filter(user=self.request.user)
+        print(queryset)
         query = self.request.GET.get('q')
 
         # 如果有搜索关键词，则进一步过滤
