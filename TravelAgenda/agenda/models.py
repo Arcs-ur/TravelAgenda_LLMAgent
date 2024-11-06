@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User  # 导入用户模型
 
+from django.conf import settings  
 class Location(models.Model):
     name = models.CharField(max_length=200)  # 地点名称
     address = models.CharField(max_length=300, blank=True)  # 地址（可选）
@@ -13,7 +13,7 @@ class Location(models.Model):
 class Agenda(models.Model):
     title = models.CharField(max_length=200, default='Unnamed agenda')  # 日程名称
     created_at = models.DateTimeField(default=timezone.now)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 外键，指向用户模型
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  
 
     def __str__(self):
         return f"{self.user.username}'s Agenda: {self.title}"

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import AgendaListView
 from django.contrib.auth import views as auth_views
 from .views import call_api
 from django_select2 import views as select2_views
@@ -21,7 +22,7 @@ urlpatterns = [
     path('agendas/add/', views.add_agenda, name='add_agenda'),
     path('agendas/import/', views.import_agenda, name='import_agenda'),
     path('agendas/addtrip/', views.add_Travelagenda, name='add_Travelagenda'),
-    path('update/<int:id>/', views.update_agenda, name='update_agenda'),
+  #  path('update/<int:id>/', views.AgendaUpdateView.as_view(), name='update_agenda'),
     path('call_api/', views.call_api, name='call_api'),
     # path('select2/', views.Select2View.as_view(), name='select2'),
     path('locations/search/', views.location_search, name='location_search'),

@@ -2,8 +2,9 @@ from django.utils import timezone
 from .models import AgendaLocation
 
 def agenda_data(request):
-    total_locations = AgendaLocation.objects.count()
-    top_three_locations = AgendaLocation.objects.all()[:3]
+    # 只获取当前用户的 AgendaLocation
+    total_locations = AgendaLocation.objects.filter(agenda__user=request.user).count()
+    top_three_locations = AgendaLocation.objects.filter(agenda__user=request.user).order_by('-created_at')[:3]
 
     for location in top_three_locations:
         location.progress = calculate_progress(location)  # 计算进度

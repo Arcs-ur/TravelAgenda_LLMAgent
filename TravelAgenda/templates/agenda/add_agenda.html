@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
 
 {% block title %}添加行程{% endblock %}
+{% block trace %}
+<div class="container-fluid px-4">
+  <nav aria-label="breadcrumb">
+      <ol class="breadcrumb my-0">
+          <li class="breadcrumb-item"><span>Home</span></li>
+          <li class="breadcrumb-item"><span>Agenda</span></li>
+          <li class="breadcrumb-item active"><span>Add Agenda</span></li>
+      </ol>
+  </nav>
+</div>
+{% endblock %}
 {% load static %}
 <link href="{% static 'django_select2/css/select2.min.css' %}" rel="stylesheet" />
 {% block script %}

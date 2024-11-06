@@ -1,7 +1,17 @@
 {% extends 'base.html' %}
 
 {% block title %}更新 {{ loc.agenda.title }}{% endblock %}
-
+{% block trace %}
+<div class="container-fluid px-4">
+  <nav aria-label="breadcrumb">
+      <ol class="breadcrumb my-0">
+          <li class="breadcrumb-item"><span>Home</span></li>
+          <li class="breadcrumb-item"><span>Agenda</span></li>
+          <li class="breadcrumb-item active"><span>Update</span></li>
+      </ol>
+  </nav>
+</div>
+{% endblock %}
 {% block content %}
 <div class="container">
     <h1>更新 {{ loc.agenda.title }}</h1>
