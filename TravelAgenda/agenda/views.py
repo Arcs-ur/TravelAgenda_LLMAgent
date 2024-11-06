@@ -334,84 +334,10 @@ def call_api(request):
         #     knowledge_base = file.read()
         #2024.11.01到2024.11.02，预计从温州出发，到南京游玩，我很想去中山陵，我的酒店预算每天在200~400元。
         prompt = (
-    f"请按照以下严格的JSON格式提供行程安排，从{departure_date}到{return_date}，出发城市为{setoff_city}，目的地为{destination_name}，"
-    f"我想要游玩的主要景点包括{must_play}。我的酒店预算为每天{hotel_price}。"
-    f"请根据我的预算选择合适的酒店，详细制定行程，包括每天的住宿地点（具体酒店）、每餐的用餐地点（具体餐厅），"
-    f"以及每个景点的到达和离开时间。"
-    f"请务必严格按照以下JSON格式，每项行程包含完整的信息：出发地、到达地、出发时间、到达时间和通勤方式。\n\n"
-    "```\n"
-    "{\n"
-    "  \"agenda\": \"我的旅行日程\",\n"
-    "  \"itinerary\": [\n"
-    "    {\n"
-    "      \"第1天\": [\n"
-    "        {\n"
-    "          \"departure_location\": \"北京\",\n"
-    "          \"arrival_location\": \"上海\",\n"
-    "          \"departure_time\": \"2023-12-01 08:00\",\n"
-    "          \"arrival_time\": \"2023-12-01 12:00\",\n"
-    "          \"commute_info\": \"航班 CA123\"\n"
-    "        },\n"
-    "        {\n"
-    "          \"departure_location\": \"上海虹桥机场\",\n"
-    "          \"arrival_location\": \"上海海仑宾馆 (符合预算)\",\n"
-    "          \"departure_time\": \"2023-12-01 12:30\",\n"
-    "          \"arrival_time\": \"2023-12-01 13:00\",\n"
-    "          \"commute_info\": \"出租车\"\n"
-    "        },\n"
-    "        {\n"
-    "          \"departure_location\": \"上海海仑宾馆\",\n"
-    "          \"arrival_location\": \"外滩餐厅\",\n"
-    "          \"departure_time\": \"2023-12-01 13:30\",\n"
-    "          \"arrival_time\": \"2023-12-01 14:00\",\n"
-    "          \"commute_info\": \"步行\"\n"
-    "        },\n"
-    "        {\n"
-    "          \"departure_location\": \"外滩餐厅\",\n"
-    "          \"arrival_location\": \"外滩\",\n"
-    "          \"departure_time\": \"2023-12-01 15:00\",\n"
-    "          \"arrival_time\": \"2023-12-01 16:00\",\n"
-    "          \"commute_info\": \"步行\"\n"
-    "        },\n"
-    "        {\n"
-    "          \"departure_location\": \"外滩\",\n"
-    "          \"arrival_location\": \"东方明珠塔\",\n"
-    "          \"departure_time\": \"2023-12-01 17:00\",\n"
-    "          \"arrival_time\": \"2023-12-01 17:30\",\n"
-    "          \"commute_info\": \"出租车\"\n"
-    "        },\n"
-    "        {\n"
-    "          \"departure_location\": \"东方明珠塔\",\n"
-    "          \"arrival_location\": \"上海海仑宾馆\",\n"
-    "          \"departure_time\": \"2023-12-01 20:00\",\n"
-    "          \"arrival_time\": \"2023-12-01 20:30\",\n"
-    "          \"commute_info\": \"出租车\"\n"
-    "        }\n"
-    "      ]\n"
-    "    },\n"
-    "    {\n"
-    "      \"第2天\": [\n"
-    "        {\n"
-    "          \"departure_location\": \"上海海仑宾馆\",\n"
-    "          \"arrival_location\": \"城隍庙\",\n"
-    "          \"departure_time\": \"2023-12-02 09:00\",\n"
-    "          \"arrival_time\": \"2023-12-02 09:30\",\n"
-    "          \"commute_info\": \"地铁\"\n"
-    "        },\n"
-    "        {\n"
-    "          \"departure_location\": \"城隍庙\",\n"
-    "          \"arrival_location\": \"豫园餐厅\",\n"
-    "          \"departure_time\": \"2023-12-02 12:00\",\n"
-    "          \"arrival_time\": \"2023-12-02 12:30\",\n"
-    "          \"commute_info\": \"步行\"\n"
-    "        }\n"
-    "      ]\n"
-    "    }\n"
-    "  ]\n"
-    "}\n"
-    "```\n"
-    "请确保生成的 JSON 中的每项都以出发地、到达地、出发时间、到达时间和通勤方式的结构提供详细信息，并根据预算为住宿选择合适的酒店。"
-)
+
+            f"{departure_date}到{return_date},预计从{setoff_city}出发，到{destination_name}游玩，我很想去{must_play}，我酒店的预算在每天{hotel_price}"
+            
+        )
 
         api_key = config('OPENAI_API_KEY')
         base_url = "https://40.chatgptsb.net/v1"
@@ -420,7 +346,7 @@ def call_api(request):
             completion = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "system", "content": '你是一个严格按照格式来生成内容的人。禁止生成任何的“\”符号！！！！！禁止生成任何的换行符！！！！！需要根据给出的地点，时间等信息来给出一份旅游攻略，其中涉及到的地点、交通方式、时间、酒店、饭店等信息必须准确详细。每一份旅游计划内部的小行程，应当按照<departure_location:xxx><departure_time:xxx><arrival_location><arrival_time><commute_info:xxx>来严格输出，并组织成json格式，输出是去除开头的```json和结尾的```。此外我要求，涉及到地点的必须具体，不能模糊只出现城市名，应当写出具体的站名。酒店饭店等也需要在行程中体现，json文件格式为day_0，day_1，day_2，……，每一天中的每一个元素组均由<departure_location:xxx><departure_time:xxx><arrival_location><arrival_time><commute_info:xxx>来严格输出。而不是单独的出现。涉及到交通方式应当写出具体的班次和时间。一个景点不应反复出现。用中文回答。'},
                     {"role": "user", "content": prompt}
                 ]
             )
